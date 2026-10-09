@@ -1,6 +1,5 @@
-import { appendToSheet, REGISTRATION_HEADERS } from "@/lib/backup";
 import { registrationOpen } from "@/lib/config";
-import { ensureSchema, sql, type Registration } from "@/lib/db";
+import { ensureSchema, sql } from "@/lib/db";
 import { clean, emailError, normalizeEmail } from "@/lib/validate";
 
 export async function POST(req: Request) {
@@ -31,23 +30,11 @@ export async function POST(req: Request) {
     const existing = (await q`SELECT email FROM registrations WHERE email = ${email}`) as { email: string }[];
     const updated = existing.length > 0;
 
-    const rows = (await q`
+    await q`
       INSERT INTO registrations (email, name, department)
       VALUES (${email}, ${name}, ${department})
       ON CONFLICT (email) DO UPDATE
-        SET name = EXCLUDED.name, department = EXCLUDED.department, updated_at = now(), backup_ok = false
-      RETURNING *`) as Registration[];
-    const r = rows[0];
-
-    const backedUp = await appendToSheet("Registrations", REGISTRATION_HEADERS, [
-      new Date().toISOString(),
-      updated ? "updated" : "registered",
-      r.email,
-      r.name,
-      r.department,
-      new Date(r.created_at).toISOString(),
-    ]);
-    if (backedUp) await q`UPDATE registrations SET backup_ok = true WHERE email = ${email}`;
+        SET name = EXCLUDED.name, department = EXCLUDED.department, updated_at = now()`;
 
     return Response.json({ ok: true, updated });
   } catch (err) {

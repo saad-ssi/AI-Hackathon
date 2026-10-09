@@ -1,14 +1,6 @@
-import { appendToSheet, SUBMISSION_HEADERS } from "@/lib/backup";
 import { submissionsOpen } from "@/lib/config";
 import { ensureSchema, sql, type SubmissionVersion } from "@/lib/db";
-import {
-  clean,
-  liveUrlError,
-  normalizeEmail,
-  repoUrlError,
-  USE_CASE_OPTIONS,
-  useCaseTitle,
-} from "@/lib/validate";
+import { clean, liveUrlError, normalizeEmail, repoUrlError, USE_CASE_OPTIONS } from "@/lib/validate";
 
 export async function POST(req: Request) {
   try {
@@ -64,19 +56,6 @@ export async function POST(req: Request) {
       ON CONFLICT (email) DO UPDATE SET
         project_name = EXCLUDED.project_name, use_case = EXCLUDED.use_case, repo_url = EXCLUDED.repo_url,
         live_url = EXCLUDED.live_url, pitch = EXCLUDED.pitch, version = EXCLUDED.version, updated_at = now()`;
-
-    const backedUp = await appendToSheet("Submissions", SUBMISSION_HEADERS, [
-      new Date(v.created_at).toISOString(),
-      v.version === 1 ? "submitted" : "resubmitted",
-      email,
-      v.version,
-      projectName,
-      useCaseTitle(useCase),
-      repoUrl,
-      liveUrl,
-      pitch,
-    ]);
-    if (backedUp) await q`UPDATE submission_versions SET backup_ok = true WHERE id = ${v.id}`;
 
     return Response.json({ ok: true, version: v.version });
   } catch (err) {

@@ -6,7 +6,6 @@ export type Registration = {
   department: string;
   created_at: string;
   updated_at: string;
-  backup_ok: boolean;
 };
 
 export type Submission = {
@@ -24,7 +23,6 @@ export type Submission = {
 export type SubmissionVersion = Omit<Submission, "submitted_at" | "updated_at"> & {
   id: number;
   created_at: string;
-  backup_ok: boolean;
 };
 
 export function sql() {
@@ -45,8 +43,7 @@ export function ensureSchema(): Promise<void> {
         name TEXT NOT NULL,
         department TEXT NOT NULL,
         created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-        updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-        backup_ok BOOLEAN NOT NULL DEFAULT false
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
       )`;
       await q`CREATE TABLE IF NOT EXISTS submissions (
         email TEXT PRIMARY KEY REFERENCES registrations(email),
@@ -69,8 +66,7 @@ export function ensureSchema(): Promise<void> {
         repo_url TEXT NOT NULL,
         live_url TEXT NOT NULL,
         pitch TEXT NOT NULL,
-        created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-        backup_ok BOOLEAN NOT NULL DEFAULT false
+        created_at TIMESTAMPTZ NOT NULL DEFAULT now()
       )`;
     })().catch((err) => {
       schemaReady = null;
