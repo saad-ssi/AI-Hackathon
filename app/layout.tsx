@@ -1,14 +1,7 @@
 import type { Metadata } from "next";
-import { Roboto } from "next/font/google";
 import Link from "next/link";
 import { EVENT } from "@/lib/config";
 import "./globals.css";
-
-const roboto = Roboto({
-  subsets: ["latin"],
-  weight: ["300", "400", "700", "900"],
-  variable: "--font-roboto",
-});
 
 export const metadata: Metadata = {
   title: `${EVENT.name} | SSI`,
@@ -17,7 +10,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={roboto.variable}>
+    <html lang="en">
+      <head>
+        {/* Loaded by the browser rather than at build time, so a Google Fonts hiccup can't break a deploy */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700;900&display=swap" />
+      </head>
       <body>
         <header className="site-header">
           <div className="wrap">
