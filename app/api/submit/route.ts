@@ -16,7 +16,7 @@ export async function POST(req: Request) {
     const useCase = clean(body.useCase, 50);
     const repoUrl = clean(body.repoUrl, 300).replace(/\/+$/, "");
     const liveUrl = clean(body.liveUrl, 300).replace(/\/+$/, "");
-    const pitch = clean(body.pitch, 200);
+    const pitch = clean(body.pitch, 600);
 
     if (!email) return Response.json({ error: "Please enter the email you registered with." }, { status: 400 });
     if (projectName.length < 2) return Response.json({ error: "Please give your project a name." }, { status: 400 });
@@ -27,7 +27,7 @@ export async function POST(req: Request) {
     if (rErr) return Response.json({ error: rErr }, { status: 400 });
     const lErr = liveUrlError(liveUrl);
     if (lErr) return Response.json({ error: lErr }, { status: 400 });
-    if (pitch.length < 10) return Response.json({ error: "Please write a one-line pitch (at least 10 characters)." }, { status: 400 });
+    if (pitch.length < 30) return Response.json({ error: "Please write a short project summary (at least 30 characters)." }, { status: 400 });
     if (body.checklist !== true) {
       return Response.json({ error: "Please confirm the final checks before submitting." }, { status: 400 });
     }

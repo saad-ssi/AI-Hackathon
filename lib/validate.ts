@@ -29,7 +29,8 @@ function parseUrl(v: string): URL | null {
 
 export function repoUrlError(v: string): string | null {
   const u = parseUrl(v);
-  if (!u || u.hostname !== "github.com" || u.pathname.split("/").filter(Boolean).length < 2) {
+  // Exactly https://github.com/<owner>/<repo>, same rule as the form's pattern
+  if (!u || u.hostname !== "github.com" || u.search || u.hash || !/^\/[\w.-]+\/[\w.-]+\/?$/.test(u.pathname)) {
     return "GitHub repo URL should look like https://github.com/your-username/your-repo";
   }
   return null;
@@ -37,7 +38,8 @@ export function repoUrlError(v: string): string | null {
 
 export function liveUrlError(v: string): string | null {
   const u = parseUrl(v);
-  if (!u || !u.hostname.endsWith(".vercel.app")) {
+  // Just the address, e.g. https://my-hack.vercel.app, same rule as the form's pattern
+  if (!u || !/^[\w-]+(\.[\w-]+)*\.vercel\.app$/.test(u.hostname) || (u.pathname !== "/" && u.pathname !== "") || u.search || u.hash) {
     return "Live URL should be your Vercel address, like https://my-hack.vercel.app";
   }
   return null;

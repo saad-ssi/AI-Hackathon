@@ -80,7 +80,7 @@ export const STEPS = [
   { title: "Kickoff", text: "Rules, rubric and use cases walked through." },
   { title: "Build", text: "Locally, with Cursor or Claude Code." },
   { title: "Deploy", text: "Push to GitHub, deploy on Vercel." },
-  { title: "Submit", text: "Repo URL, live URL and a one-line pitch, here." },
+  { title: "Submit", text: "Repo URL, live URL and a short project summary, here." },
   { title: "Evaluation", text: "Upper management scores each entry." },
   { title: "Winners", text: "Top 3 winners get the prizes." },
 ];

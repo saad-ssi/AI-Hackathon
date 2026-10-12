@@ -61,7 +61,7 @@ export default async function Admin() {
         <div className="table-wrap">
           <table>
             <thead>
-              <tr><th>Name</th><th>Project</th><th>Use case</th><th>Live URL</th><th>Repo</th><th>Pitch</th><th>Ver.</th><th>Updated</th></tr>
+              <tr><th>Name</th><th>Project</th><th>Use case</th><th>Live URL</th><th>Repo</th><th>Summary</th><th>Ver.</th><th>Updated</th></tr>
             </thead>
             <tbody>
               {subs.length === 0 && <tr><td colSpan={8} className="muted">No submissions yet.</td></tr>}
@@ -72,7 +72,7 @@ export default async function Admin() {
                   <td>{useCaseTitle(s.use_case)}</td>
                   <td><a href={s.live_url} target="_blank" rel="noreferrer">{s.live_url.replace("https://", "")}</a></td>
                   <td><a href={s.repo_url} target="_blank" rel="noreferrer">GitHub</a></td>
-                  <td>{s.pitch}</td>
+                  <td style={{ minWidth: 280 }}>{s.pitch}</td>
                   <td>{s.version}</td>
                   <td>{fmt(s.updated_at)}</td>
                 </tr>

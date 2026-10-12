@@ -74,18 +74,23 @@ export default function SubmitForm({ useCases }: { useCases: Option[] }) {
       </div>
       <div className="field">
         <label htmlFor="repoUrl">GitHub repo URL</label>
-        <input id="repoUrl" name="repoUrl" type="url" required placeholder="https://github.com/your-username/my-hack" />
+        <input id="repoUrl" name="repoUrl" type="url" required placeholder="https://github.com/your-username/my-hack"
+          pattern="https://github\.com/(\w|\.|-)+/(\w|\.|-)+/?"
+          title="Your GitHub repository, like https://github.com/your-username/my-hack" />
       </div>
       <div className="field">
         <label htmlFor="liveUrl">Live Vercel URL</label>
-        <input id="liveUrl" name="liveUrl" type="url" required placeholder="https://my-hack.vercel.app" />
+        <input id="liveUrl" name="liveUrl" type="url" required placeholder="https://my-hack.vercel.app"
+          pattern="https://(\w|-)+(\.(\w|-)+)*\.vercel\.app/?"
+          title="Your Vercel address, like https://my-hack.vercel.app" />
         <div className="hint">The short address under Domains in your Vercel project.</div>
       </div>
       <div className="field">
-        <label htmlFor="pitch">One-line pitch</label>
-        <textarea id="pitch" name="pitch" required minLength={10} maxLength={200} rows={2}
-          placeholder="What your app does, and for whom" onChange={(e) => setPitchLen(e.target.value.length)} />
-        <div className="hint">{pitchLen}/200 characters</div>
+        <label htmlFor="pitch">Project summary</label>
+        <textarea id="pitch" name="pitch" required minLength={30} maxLength={600} rows={5}
+          placeholder="What it does and who it's for, then what stands out, e.g. agentic features, business value or a clever technique."
+          onChange={(e) => setPitchLen(e.target.value.length)} />
+        <div className="hint">Briefly: what you built, and the 1–3 things that make it stand out in your opinion. {pitchLen}/600 characters</div>
       </div>
       <div className="hp" aria-hidden="true">
         <label htmlFor="website">Website</label>
