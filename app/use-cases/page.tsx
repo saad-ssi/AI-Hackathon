@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { MUST_HAVES, OWN_IDEA, USE_CASES } from "@/lib/config";
+import { MUST_HAVES, OWN_IDEA, USE_CASES, USE_CASES_NOTE } from "@/lib/config";
 
 export const metadata = { title: "Use cases | AI Hackathon 2026" };
 
@@ -37,23 +37,8 @@ export default function UseCases() {
             {USE_CASES.map((u, i) => (
               <div className="card" key={u.id}>
                 <div className="badge">{i + 1}</div>
-                <h3>
-                  {u.title}
-                  {u.agentic && <span className="pill">Agentic</span>}
-                </h3>
+                <h3>{u.title}</h3>
                 <p className="muted">{u.description}</p>
-                {u.delivers && (
-                  <>
-                    <div className="tag">What it delivers</div>
-                    <p>{u.delivers}</p>
-                  </>
-                )}
-                {u.sources && (
-                  <>
-                    <div className="tag">Data sources</div>
-                    <p className="muted small">{u.sources}</p>
-                  </>
-                )}
               </div>
             ))}
             <div className="card red">
@@ -61,6 +46,10 @@ export default function UseCases() {
               <h3>{OWN_IDEA.title}</h3>
               <p>{OWN_IDEA.description}</p>
             </div>
+          </div>
+          <div className="card white" style={{ marginTop: 24 }}>
+            <h3>{USE_CASES_NOTE.title}</h3>
+            <p>{USE_CASES_NOTE.text}</p>
           </div>
           <div className="btn-row">
             <Link href="/register" className="btn">Register</Link>

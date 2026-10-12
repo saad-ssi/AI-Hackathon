@@ -108,9 +108,6 @@ export type UseCase = {
   id: string;
   title: string;
   description: string;
-  delivers?: string;
-  sources?: string;
-  agentic?: boolean;
 };
 
 export const USE_CASES: UseCase[] = [
@@ -153,24 +150,24 @@ export const USE_CASES: UseCase[] = [
   {
     id: "fact-checker",
     title: "Fact-Checking Agent",
-    agentic: true,
     description:
       "Paste any article or post. The agent splits it into individual factual claims, searches free public sources for each one, cross-checks the evidence and searches again whenever sources disagree.",
-    delivers:
-      "A verdict for every claim (supported, disputed or unverified) with the evidence linked.",
-    sources: "Wikipedia, Wikidata, World Bank and other free public APIs",
   },
   {
     id: "prior-art-scout",
     title: "Prior-Art Scout",
-    agentic: true,
     description:
       "Describe an invention or product idea. The agent searches patents and research papers, sharpens its search terms based on what it finds, and keeps going until the results stop improving.",
-    delivers:
-      "The closest existing patents and papers, ranked, with a plain-English note on how each overlaps the idea.",
-    sources: "PatentsView (free API key), OpenAlex, arXiv",
   },
 ];
+
+export const USE_CASES_NOTE = {
+  title: "These are starting points, not limits",
+  text:
+    "The use cases above are only samples. You have the freedom to innovate: change them, combine them or take them somewhere new. " +
+    "You can also enhance any of them with agentic AI, for example an agent that plans its own steps, uses tools or public APIs, " +
+    "checks its results and retries when something fails. Doing so can strengthen your score.",
+};
 
 export const OWN_IDEA = {
   id: "own-idea",
