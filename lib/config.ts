@@ -87,8 +87,8 @@ export const STEPS = [
 
 export const MUST_HAVES = [
   {
-    title: "Make a real LLM call",
-    text: "Through your LiteLLM key to score, summarise, classify or reason; not keyword rules.",
+    title: "Make real LLM calls at runtime",
+    text: "Use your LiteLLM key so your live app calls an AI model to score, summarise, classify or reason, not keyword rules.",
   },
   {
     title: "Use public or made-up data only",
