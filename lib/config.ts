@@ -96,7 +96,7 @@ export const MUST_HAVES = [
   },
   {
     title: "Be live on Vercel",
-    text: "A working public URL that evaluators can open and use.",
+    text: "A working public URL that evaluators can open and use. Build in JavaScript or Python (FastAPI/Flask); Streamlit and Gradio can't run on Vercel.",
   },
   {
     title: "Meet a minimum bar, then stretch",
@@ -212,6 +212,7 @@ export const TOOLS = [
     title: "Build",
     sub: "Cursor or Claude Code",
     items: [
+      "Build in JavaScript (Next.js) or Python (FastAPI or Flask, e.g. with LangGraph)",
       "Use them exactly as you do day to day",
       "Already licensed org-wide; nothing new to install",
       "Recommended: Accept Edits mode, not full auto",
@@ -232,6 +233,7 @@ export const TOOLS = [
     items: [
       "Sign in with GitHub, import the repo, deploy",
       "Every push redeploys automatically",
+      "Streamlit and Gradio aren't supported on Vercel",
       "Follow the Guide page step by step",
     ],
   },

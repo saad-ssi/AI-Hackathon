@@ -2,6 +2,8 @@
 
 This guide takes you from an empty laptop to a live public URL for your hackathon app, one step at a time. You don't need any prior experience with Vercel, GitHub or web hosting. Expect about 45 minutes the first time.
 
+The main steps build the app in JavaScript (Next.js). Prefer Python, for example for LangGraph? Follow **Building in Python instead** after Step 5 in place of Steps 3 to 5; everything else is shared.
+
 ## How it fits together
 
 Three services work together: GitHub stores your code, Vercel runs your app on the internet, and SSI's LiteLLM gateway gives it access to AI models.
@@ -12,7 +14,7 @@ Only your API route ever sees your key. The browser talks to your app, and your 
 
 ## Words you'll see
 
-You only need these eight terms. Come back to this table whenever a step uses one.
+You only need these nine terms. Come back to this table whenever a step uses one.
 
 | Term | What it means in plain words |
 | --- | --- |
@@ -24,6 +26,7 @@ You only need these eight terms. Come back to this table whenever a step uses on
 | API route | A small piece of server code inside your app (a file named `route.ts`). It runs on Vercel's servers, never in the user's browser, so it can safely hold secrets. |
 | Environment variable | A named secret setting, such as your API key, stored outside your code. Locally it lives in `.env.local`; on Vercel you type it into the project settings. |
 | LiteLLM | SSI's gateway to the AI models. Your personal key lets your app call the models through it, with a spend cap per key. |
+| `openai` library | A code library that speaks the industry-standard request format LiteLLM uses. **Despite the name, it talks only to SSI's LiteLLM gateway**, which sends your request to the model SSI enabled (e.g. Claude). No OpenAI account or key is involved. |
 
 ## Before you start
 
@@ -44,7 +47,7 @@ Copy the three values exactly as sent, including any `/v1` at the end of the add
 
 ## Step 1: Install Node.js, Git and an editor
 
-Install two free programs, then confirm both respond in a terminal. Skip any you already have.
+Install two free programs, then confirm both respond in a terminal. Skip any you already have. Building in Python? Install Git and an editor here, and Python instead of Node.js (see Building in Python instead).
 
 1. **Node.js** runs JavaScript on your laptop and comes with `npm`, which installs code libraries.
    - Go to [nodejs.org](https://nodejs.org), download the **LTS** version (version 20 or newer), and run the installer with the default options.
@@ -107,7 +110,7 @@ You'll start from **Next.js**, the web framework Vercel was built for. Vercel de
    npm install openai
    ```
 
-   The `openai` library works with any OpenAI-compatible gateway, including LiteLLM. Your app still uses whichever model the organizers enabled, not necessarily an OpenAI model.
+   The `openai` library works with any OpenAI-compatible gateway, including LiteLLM. It talks only to SSI's gateway, never to OpenAI, and your app uses whichever model the organizers enabled, e.g. Claude.
 5. Open the folder in Cursor: **File → Open Folder → my-hack**.
 6. Start the app on your laptop:
 
@@ -212,6 +215,163 @@ export default function Home() {
 **Test it.** With `npm run dev` running, open <http://localhost:3000>, type a question and click **Ask**. An AI answer means your whole chain works. If you see the error message instead, read the red text in your terminal and check the Troubleshooting table below.
 
 From here, build your real product on this foundation. Keep every AI call inside files under `app/api/`.
+
+## Building in Python instead (FastAPI, LangGraph)
+
+Prefer Python, for example to use LangGraph or LangChain? Vercel runs Python apps built with **FastAPI** or **Flask** with no extra configuration. Do the steps in this section **instead of Steps 3 to 5**; everything from Step 6 onward (GitHub, Vercel, submitting) is the same.
+
+**What doesn't work on Vercel:** Streamlit and Gradio apps need an always-on server, which Vercel doesn't provide, so they can't be used for this hackathon. Build your page with plain HTML (as below) or a JavaScript front end, and keep Python for the server side.
+
+**P1. Install Python.** Go to [python.org/downloads](https://www.python.org/downloads/) and install Python 3.12 or newer. On Windows, **tick "Add python.exe to PATH"** on the first installer screen. Check it worked:
+
+```bash
+python --version
+```
+
+You still need Git from Step 1; Node.js is optional for Python apps.
+
+**P2. Create the project and a virtual environment.** A virtual environment keeps this project's libraries separate from everything else on your laptop.
+
+```bash
+mkdir my-hack
+cd my-hack
+python -m venv .venv
+```
+
+Activate it, which you'll do every time you open a new terminal for this project:
+
+- **Windows:** `.venv\Scripts\activate`
+- **Mac:** `source .venv/bin/activate`
+
+Your prompt now starts with `(.venv)`. On Windows, if you see "running scripts is disabled on this system", run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`, answer **Y**, and try again.
+
+**P3. List your libraries.** In Cursor, open the `my-hack` folder and create a file named `requirements.txt` containing:
+
+```
+fastapi
+uvicorn
+openai
+python-dotenv
+```
+
+Using LangGraph? Add `langgraph` and `langchain-openai` on two more lines. Then install everything:
+
+```bash
+pip install -r requirements.txt
+```
+
+Vercel reads this same file to install your libraries when it deploys, so whenever you `pip install` something new, add it to `requirements.txt` too.
+
+**P4. Keep secrets and clutter out of GitHub.** Create a file named `.gitignore` containing:
+
+```
+.venv/
+__pycache__/
+.env*.local
+```
+
+Then create `.env.local` with your three values, exactly as in Step 4.
+
+**P5. Make your first LLM call.** Create a file named `app.py`. Vercel looks for a FastAPI object called `app` in a file with this name. Paste:
+
+```python
+import os
+
+from dotenv import load_dotenv
+from fastapi import FastAPI
+from fastapi.responses import HTMLResponse, JSONResponse
+from openai import OpenAI
+from pydantic import BaseModel
+
+load_dotenv(".env.local")  # on your laptop only; on Vercel the values come from Environment Variables
+
+app = FastAPI()
+
+
+class ChatRequest(BaseModel):
+    message: str
+
+
+@app.post("/api/chat")
+def chat(req: ChatRequest):
+    try:
+        # Connects to SSI's LiteLLM gateway using your secret settings
+        client = OpenAI(
+            api_key=os.environ["LITELLM_API_KEY"],
+            base_url=os.environ["LITELLM_BASE_URL"],
+        )
+        completion = client.chat.completions.create(
+            model=os.environ["LITELLM_MODEL"],
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": req.message},
+            ],
+        )
+        return {"reply": completion.choices[0].message.content}
+    except Exception as err:
+        print(err)  # appears in your terminal locally, and in Vercel's Logs tab once deployed
+        return JSONResponse({"error": "The AI call failed. Check the logs."}, status_code=500)
+
+
+PAGE = """<!doctype html>
+<html><body style="max-width:640px;margin:40px auto;font-family:sans-serif">
+  <h1>My Hackathon App</h1>
+  <textarea id="q" rows="4" style="width:100%"></textarea>
+  <button id="ask">Ask</button>
+  <p id="reply" style="white-space:pre-wrap"></p>
+  <script>
+    document.getElementById("ask").onclick = async () => {
+      const btn = document.getElementById("ask");
+      btn.disabled = true; btn.textContent = "Thinking...";
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: document.getElementById("q").value }),
+      });
+      const data = await res.json();
+      document.getElementById("reply").textContent = data.reply ?? data.error;
+      btn.disabled = false; btn.textContent = "Ask";
+    };
+  </script>
+</body></html>"""
+
+
+@app.get("/", response_class=HTMLResponse)
+def home():
+    return PAGE
+```
+
+**Test it.** Run the app on your laptop:
+
+```bash
+uvicorn app:app --reload
+```
+
+Open <http://localhost:8000>, type a question and click **Ask**. Stop it with **Ctrl + C**.
+
+**Using LangGraph or LangChain:** point the model at LiteLLM the same way, then use `llm` in your graph as normal:
+
+```python
+from langchain_openai import ChatOpenAI
+
+llm = ChatOpenAI(
+    model=os.environ["LITELLM_MODEL"],
+    base_url=os.environ["LITELLM_BASE_URL"],
+    api_key=os.environ["LITELLM_API_KEY"],
+)
+```
+
+**Now continue with Step 6.** When you import the project into Vercel (Step 7), the **Framework Preset** should show **FastAPI**. Add the same three environment variables there.
+
+**Python limits on Vercel's free plan**
+
+| Limit | What it means for you |
+| --- | --- |
+| 5 minutes per request | A request that runs longer is cut off with a `504` error. Run long agent loops one step per request (see Tips for agentic apps). |
+| Nothing runs between requests | No background jobs, and memory isn't kept from one request to the next. Store conversation or agent state in the browser or a database, not in Python variables. |
+| 500 MB for your code and libraries | Lightweight libraries (FastAPI, LangGraph, LangChain, pandas) are fine. Large ML libraries such as PyTorch or TensorFlow won't fit; call models through LiteLLM instead. |
+| 4.5 MB per request or response | Large file uploads won't work. Keep uploads small. |
+| Files you write aren't kept | Anything saved to disk disappears after the request. |
 
 ## Step 6: Put your code on GitHub
 
@@ -355,6 +515,9 @@ Most problems are a missing environment variable or a typo. Check the logs first
 | `git push` is rejected with `fetch first` or `non-fast-forward` | The GitHub repo was created with a README or .gitignore | Run `git pull origin main --rebase`, then `git push` again. |
 | Your repo doesn't appear in Vercel's import list | Vercel isn't allowed to see it | Click **Adjust GitHub App Permissions** and grant access to the repo (Step 7b). |
 | Build fails on Vercel | A code error. Vercel builds more strictly than `npm run dev` | Run `npm run build` on your laptop: it shows the same error. Fix it, commit, push. |
+| Python app: logs show `ModuleNotFoundError` on Vercel | A library you installed isn't listed in `requirements.txt` | Add it to `requirements.txt`, commit, push. |
+| Python app: deploy fails because the function is too large | A heavy library (e.g. PyTorch) pushed it past 500 MB | Remove it from `requirements.txt`; call models through LiteLLM instead. |
+| Windows: "running scripts is disabled on this system" when activating `.venv` | PowerShell's default safety setting | Run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`, answer **Y**, try again. |
 | App works locally, but on Vercel **Ask** returns the error message | Environment variables missing or misspelled on Vercel | Check **Settings → Environment Variables** against `.env.local`, then **Redeploy** (Step 8). |
 | Logs show `401` or `Authentication Error` | Wrong or expired key | Re-copy the key. If it still fails, ask the organizers. |
 | Logs show `model not found` or `Invalid model name` | `LITELLM_MODEL` doesn't match an allowed model | Use a name from the list in Step 2. |
@@ -370,7 +533,7 @@ Your app is on a public URL and your code is in a public repo, so these rules ar
 | Do | Don't |
 | --- | --- |
 | Keep your key in `.env.local` and in Vercel's Environment Variables | Paste your key into any code file, README or screenshot |
-| Call LiteLLM only from files under `app/api/` (server code) | Call LiteLLM from page code, or name a variable `NEXT_PUBLIC_...`. Anything with that prefix is sent to every visitor's browser. |
+| Call LiteLLM only from server code: files under `app/api/` in Next.js, or your FastAPI/Flask routes in Python | Call LiteLLM from page code, or name a variable `NEXT_PUBLIC_...`. Anything with that prefix is sent to every visitor's browser. |
 | Use public data, or data you made up | Use client, customer or internal SSI data, even "just for testing" |
 | Keep your own key to yourself | Share keys between participants |
 | Use Accept Edits mode in Cursor or Claude Code, and review changes | Let an AI agent run fully unattended on your work laptop |
@@ -390,17 +553,11 @@ Agents make many model calls in a loop, which brings two things to plan for: too
 3. Your API route runs that tool (for example, fetches a public API) and sends the result back to the model.
 4. Repeat until the model gives a final answer.
 
-The free **Vercel AI SDK** handles this loop and streaming for you: install `ai` and `@ai-sdk/openai`, then point its provider at your `LITELLM_BASE_URL` and `LITELLM_API_KEY`. Ask Cursor or Claude Code to set it up; they know it well.
+The free **Vercel AI SDK** handles this loop and streaming for you: install `ai` and `@ai-sdk/openai`, then point its provider at your `LITELLM_BASE_URL` and `LITELLM_API_KEY`. Ask Cursor or Claude Code to set it up; they know it well. In Python, **LangGraph** does the same job: give it the `llm` from the Python section and your tools.
 
-**Mind Vercel's time limit.** Each request to an API route has a maximum run time. If one request runs the whole agent loop, it can be cut off with a `504` error. Two fixes:
+**Mind Vercel's time limit.** On the free plan each request to your server code can run for at most 5 minutes, in JavaScript and Python alike. If one request runs the whole agent loop, it can be cut off with a `504` error. Two fixes:
 
 - **One step per request:** the page calls your API route once per agent step and shows each step as it arrives. This also gives evaluators the visible step-by-step trace they will look for.
-- **Stream progress:** send partial results to the page as they happen, which the AI SDK does for you.
-
-You can also raise a route's limit, up to your plan's maximum, by adding this line to its `route.ts`:
-
-```ts
-export const maxDuration = 60; // seconds
-```
+- **Stream progress:** send partial results to the page as they happen. The AI SDK does this for you in JavaScript; in Python, use FastAPI's `StreamingResponse`.
 
 **Limit loops.** Always cap the number of steps (for example, 10), so a confused agent can't spend your whole budget.
