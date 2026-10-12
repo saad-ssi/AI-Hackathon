@@ -8,7 +8,7 @@ export const EVENT = {
   objective:
     "Promote AI-driven development across SSI by building real AI-based products.",
   objectiveDetail:
-    "Every participant uses AI to build, builds something AI-powered, and ships it live for leadership to see.",
+    "Every participant builds an AI-powered application and ships it live for leadership to evaluate.",
   prizes: "Top 3 winners receive prizes. Prize details: TBD.",
   judges: "Upper management",
   expectedParticipants: "~100",
@@ -81,7 +81,7 @@ export const STEPS = [
   { title: "Build", text: "Locally, with Cursor or Claude Code." },
   { title: "Deploy", text: "Push to GitHub, deploy on Vercel." },
   { title: "Submit", text: "Repo URL, live URL and a one-line pitch, here." },
-  { title: "Judging", text: "Upper management scores each entry." },
+  { title: "Evaluation", text: "Upper management scores each entry." },
   { title: "Winners", text: "Top 3 winners get the prizes." },
 ];
 
@@ -96,7 +96,7 @@ export const MUST_HAVES = [
   },
   {
     title: "Be live on Vercel",
-    text: "A working public URL that judges can open and use.",
+    text: "A working public URL that evaluators can open and use.",
   },
   {
     title: "Meet a minimum bar, then stretch",
@@ -176,7 +176,7 @@ export const OWN_IDEA = {
   id: "own-idea",
   title: "Bring your own idea",
   description:
-    "Have something better? Build it. Any AI-powered product is welcome if it meets the four must-haves, and it's judged on exactly the same rubric as the sample use cases.",
+    "Have something better? Build it. Any AI-powered product is welcome if it meets the four must-haves, and it's evaluated on exactly the same rubric as the sample use cases.",
 };
 
 export const RUBRIC = [

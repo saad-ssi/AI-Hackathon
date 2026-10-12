@@ -15,7 +15,7 @@ export default function Submit() {
       <div className="wrap">
         <h1>Submit your entry</h1>
         <p className="lead">
-          Deadline: <strong>{deadline}</strong>. You can resubmit as often as you like before the deadline; your latest submission is the one judged.
+          Deadline: <strong>{deadline}</strong>. You can resubmit as often as you like before the deadline; your latest submission is the one evaluated.
         </p>
 
         <div className="form-layout" style={{ marginTop: 32 }}>
@@ -24,7 +24,7 @@ export default function Submit() {
           ) : (
             <div className="closed">
               <h3>Submissions are closed</h3>
-              <p>Thanks to everyone who took part. Judging is under way; keep your app live until winners are announced.</p>
+              <p>Thanks to everyone who took part. Evaluation is under way; keep your app live until winners are announced.</p>
             </div>
           )}
 

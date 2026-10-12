@@ -46,8 +46,8 @@ export default function SubmitForm({ useCases }: { useCases: Option[] }) {
         <div className="alert ok">
           <strong>{version > 1 ? `Resubmission received (version ${version}).` : "Submission received!"}</strong>
         </div>
-        <p>Your latest submission is the one that will be judged. You can resubmit any time before the deadline.</p>
-        <p>Keep your app live and working until winners are announced: judges open your live URL directly.</p>
+        <p>Your latest submission is the one that will be evaluated. You can resubmit any time before the deadline.</p>
+        <p>Keep your app live and working until winners are announced: evaluators open your live URL directly.</p>
         <button className="btn dark" onClick={() => setStatus("idle")}>Submit an update</button>
       </div>
     );

@@ -10,7 +10,7 @@ export default function UseCases() {
         <div className="wrap">
           <h1>What to build</h1>
           <p className="lead">
-            Choose one of the sample use cases below, or bring your own idea. Every entry is judged on the same rubric.
+            Choose one of the sample use cases below, or bring your own idea. Every entry is evaluated on the same rubric.
           </p>
         </div>
       </section>

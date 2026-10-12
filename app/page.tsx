@@ -26,7 +26,7 @@ export default function Home() {
         <div className="wrap">
           <h2>Key dates</h2>
           <KeyDates />
-          <p className="muted small">Dates marked TBD will be announced. Judging takes place over the weeks after the deadline.</p>
+          <p className="muted small">Dates marked TBD will be announced. Evaluation takes place over the weeks after the deadline.</p>
         </div>
       </section>
 
@@ -67,7 +67,7 @@ export default function Home() {
               <p style={{ marginTop: 12 }}><Link href="/use-cases">See the use cases →</Link></p>
             </div>
             <div className="card white">
-              <h3>How you&apos;re judged</h3>
+              <h3>How you&apos;re evaluated</h3>
               <p>{EVENT.judges} score each live entry against a six-part rubric. Working product, effective use of Claude/Cursor and business value carry the most weight.</p>
               <p style={{ marginTop: 12 }}><Link href="/rules">Rules &amp; rubric →</Link></p>
             </div>

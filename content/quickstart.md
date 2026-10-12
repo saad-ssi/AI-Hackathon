@@ -223,7 +223,7 @@ Vercel deploys from GitHub, so your code needs to be there first. Do this once; 
 
 1. On GitHub, click the **+** at the top right, then **New repository**.
 2. **Repository name:** `my-hack`, or your project's name.
-3. Choose **Public**. Judges need to open your code, and it holds no secrets because `.env.local` is never uploaded.
+3. Choose **Public**. Evaluators need to open your code, and it holds no secrets because `.env.local` is never uploaded.
 4. **Leave every "Initialize" option unticked**: no README, no .gitignore, no license. Your laptop already has these files, and adding them here causes a conflict.
 5. Click **Create repository**. Keep the page open: it shows your repo's address, like `https://github.com/<your-username>/my-hack.git`.
 
@@ -334,7 +334,7 @@ On this portal's [Submit page](/submit), enter two links and a one-line pitch be
 | Live Vercel URL | Your **production domain**: the short address under **Domains** | `https://my-hack.vercel.app` |
 | One-line pitch | What your app does, for whom | "An agent that fact-checks any article against public sources" |
 
-**Use the short `.vercel.app` address, not a deployment link.** Vercel also shows long addresses such as `my-hack-a1b2c3-yourname.vercel.app`. Those point to one specific build and may ask visitors to log in to Vercel. Judges would hit a login wall.
+**Use the short `.vercel.app` address, not a deployment link.** Vercel also shows long addresses such as `my-hack-a1b2c3-yourname.vercel.app`. Those point to one specific build and may ask visitors to log in to Vercel. Evaluators would hit a login wall.
 
 **Final check before you submit:**
 
@@ -343,7 +343,7 @@ On this portal's [Submit page](/submit), enter two links and a one-line pitch be
 - Search your repo on GitHub for `sk-`: it must not find your key.
 - Your last change shows **Ready** in Vercel's **Deployments** tab.
 
-Keep your app deployed and working until winners are announced. Judging happens over the following weeks, and judges open your live URL directly.
+Keep your app deployed and working until winners are announced. Evaluation happens over the following weeks, and evaluators open your live URL directly.
 
 ## Troubleshooting
 
@@ -361,7 +361,7 @@ Most problems are a missing environment variable or a typo. Check the logs first
 | Logs show `budget exceeded` | Your key reached its spend cap | Contact the organizers. Avoid loops that call the model endlessly. |
 | Logs show a timeout, or the page shows `504` | One request ran longer than Vercel allows | See Tips for agentic apps below. |
 | You changed a setting but nothing changed | No redeploy after changing an environment variable | **Deployments → ⋯ → Redeploy**. |
-| Judges or friends see a Vercel login page | You shared a deployment-specific URL | Share the short `.vercel.app` production address (Step 9). |
+| Evaluators or friends see a Vercel login page | You shared a deployment-specific URL | Share the short `.vercel.app` production address (Step 9). |
 
 ## Rules for keys and data
 
@@ -394,7 +394,7 @@ The free **Vercel AI SDK** handles this loop and streaming for you: install `ai`
 
 **Mind Vercel's time limit.** Each request to an API route has a maximum run time. If one request runs the whole agent loop, it can be cut off with a `504` error. Two fixes:
 
-- **One step per request:** the page calls your API route once per agent step and shows each step as it arrives. This also gives judges the visible step-by-step trace they will look for.
+- **One step per request:** the page calls your API route once per agent step and shows each step as it arrives. This also gives evaluators the visible step-by-step trace they will look for.
 - **Stream progress:** send partial results to the page as they happen, which the AI SDK does for you.
 
 You can also raise a route's limit, up to your plan's maximum, by adding this line to its `route.ts`:

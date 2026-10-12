@@ -23,9 +23,9 @@ export default function Rules() {
             </div>
             <div className="grid">
               <div className="card dark">
-                <div className="tag" style={{ color: "#fff" }}>Judging panel</div>
+                <div className="tag" style={{ color: "#fff" }}>Evaluation panel</div>
                 <h3>{EVENT.judges}</h3>
-                <p>Judges open each live entry from the portal and score it against the rubric.</p>
+                <p>Evaluators open each live entry from the portal and score it against the rubric.</p>
               </div>
               <div className="card red">
                 <div className="tag">Prizes</div>
