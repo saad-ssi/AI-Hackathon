@@ -63,7 +63,7 @@ export default function Home() {
           <div className="grid cols-3">
             <div className="card white">
               <h3>What to build</h3>
-              <p>Pick one of eight sample use cases, or bring your own idea. Every entry must make a real LLM call and be live on Vercel.</p>
+              <p>Pick one of eight sample use cases, or bring your own idea. Every entry must make real LLM calls at runtime and be live on Vercel.</p>
               <p style={{ marginTop: 12 }}><Link href="/use-cases">See the use cases →</Link></p>
             </div>
             <div className="card white">
