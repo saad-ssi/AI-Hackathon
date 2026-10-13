@@ -10,7 +10,7 @@ Three services work together: GitHub stores your code, Vercel runs your app on t
 
 ![How a hackathon app is built, deployed and calls AI](/guide/architecture.png)
 
-Only your API route ever sees your key. The browser talks to your app, and your app talks to LiteLLM.
+> [!TIP] Only your API route ever sees your key. The browser talks to your app, and your app talks to LiteLLM.
 
 ## Words you'll see
 
@@ -43,7 +43,7 @@ You need a laptop with internet access, admin rights to install two programs, an
 | `LITELLM_API_KEY` | Your personal key. Treat it like a password. | `sk-` followed by a long string |
 | `LITELLM_MODEL` | The name of the model you're allowed to use | A short name such as `claude-sonnet` |
 
-Copy the three values exactly as sent, including any `/v1` at the end of the address. Don't share your key with anyone, including teammates; every participant gets their own.
+> [!WARNING] Copy the three values exactly as sent, including any `/v1` at the end of the address. Don't share your key with anyone, including teammates; every participant gets their own.
 
 ## Step 1: Install Node.js, Git and an editor
 
@@ -122,7 +122,7 @@ You'll start from **Next.js**, the web framework Vercel was built for. Vercel de
 
 To stop the app, click the terminal and press **Ctrl + C**. Run `npm run dev` again to restart it.
 
-**Using AI to build this:** you can ask Cursor or Claude Code to do any step in this guide for you, for example: "Create a Next.js app with an API route that calls LiteLLM using the openai package and the LITELLM_* environment variables." Read what it changes before accepting.
+> [!TIP] **Using AI to build this:** you can ask Cursor or Claude Code to do any step in this guide for you, for example: "Create a Next.js app with an API route that calls LiteLLM using the openai package and the LITELLM_* environment variables." Read what it changes before accepting.
 
 ## Step 4: Store your secrets safely in .env.local
 
@@ -220,7 +220,7 @@ From here, build your real product on this foundation. Keep every AI call inside
 
 Prefer Python, for example to use LangGraph or LangChain? Vercel runs Python apps built with **FastAPI** or **Flask** with no extra configuration. Do the steps in this section **instead of Steps 3 to 5**; everything from Step 6 onward (GitHub, Vercel, submitting) is the same.
 
-**What doesn't work on Vercel:** Streamlit and Gradio apps need an always-on server, which Vercel doesn't provide, so they can't be used for this hackathon. Build your page with plain HTML (as below) or a JavaScript front end, and keep Python for the server side.
+> [!WARNING] **What doesn't work on Vercel:** Streamlit and Gradio apps need an always-on server, which Vercel doesn't provide, so they can't be used for this hackathon. Build your page with plain HTML (as below) or a JavaScript front end, and keep Python for the server side.
 
 **P1. Install Python.** Go to [python.org/downloads](https://www.python.org/downloads/) and install Python 3.12 or newer. On Windows, **tick "Add python.exe to PATH"** on the first installer screen. Check it worked:
 
@@ -400,9 +400,9 @@ git push -u origin main
 - `git add .` and `git commit` save a snapshot of your current files. If commit says "nothing to commit", that's fine: Next.js already made one.
 - `git push` uploads it. The first time, a browser window asks you to sign in to GitHub. Approve it.
 
-**Check it worked:** refresh the repository page on GitHub. You should see your files (`app`, `package.json`, and so on). **Make sure `.env.local` is NOT in the list.** If it is, stop and read "If your key leaks" under Rules for keys and data.
+> [!WARNING] **Check it worked:** refresh the repository page on GitHub. You should see your files (`app`, `package.json`, and so on). **Make sure `.env.local` is NOT in the list.** If it is, stop and read "If your key leaks" under Rules for keys and data.
 
-**Prefer clicking to typing?** Cursor can do 6b and 6c for you. Open the **Source Control** panel (the branch icon on the left), then click **Publish Branch** and choose **public repository**. It signs you in to GitHub and creates the repo.
+> [!TIP] **Prefer clicking to typing?** Cursor can do 6b and 6c for you. Open the **Source Control** panel (the branch icon on the left), then click **Publish Branch** and choose **public repository**. It signs you in to GitHub and creates the repo.
 
 ## Step 7: Deploy on Vercel for the first time
 
@@ -436,7 +436,7 @@ This takes about five minutes and you do it only once. Afterwards Vercel redeplo
 - `LITELLM_API_KEY` → your key
 - `LITELLM_MODEL` → your model name
 
-Shortcut: copy all three lines from your `.env.local` and paste them into the first **Key** box. Vercel splits them into three entries automatically. Check that the names match exactly, with no extra spaces.
+> [!TIP] Shortcut: copy all three lines from your `.env.local` and paste them into the first **Key** box. Vercel splits them into three entries automatically. Check that the names match exactly, with no extra spaces.
 
 **7d. Deploy**
 
@@ -465,7 +465,7 @@ From now on, a single push updates your live app. You never need to click Deploy
 
 3. Within a minute or two Vercel builds and publishes it. Watch progress in your project's **Deployments** tab. A green **Ready** dot means it's live; refresh your `.vercel.app` page to see the change.
 
-If the new version fails to build, your previous working version stays live. Push often, with small changes, so you always have a working app.
+> [!TIP] If the new version fails to build, your previous working version stays live. Push often, with small changes, so you always have a working app.
 
 **Changing an environment variable** (for example, a new key from the organizers):
 
@@ -482,7 +482,7 @@ If the new version fails to build, your previous working version stays live. Pus
 | Errors while the app runs, such as a failed AI call | The **Logs** tab of your project. Your `console.error` messages appear here. |
 | Your public address | Project overview → **Domains** |
 
-**Preview deployments.** If you push to a branch other than `main`, Vercel builds a separate *preview* at a long, unique URL and leaves your main site untouched. Only pushes to `main` update `my-hack.vercel.app`.
+> [!TIP] **Preview deployments.** If you push to a branch other than `main`, Vercel builds a separate *preview* at a long, unique URL and leaves your main site untouched. Only pushes to `main` update `my-hack.vercel.app`.
 
 ## Step 9: Submit the right URLs
 
@@ -494,7 +494,7 @@ On this portal's [Submit page](/submit), enter two links and a short project sum
 | Live Vercel URL | Your **production domain**: the short address under **Domains** | `https://my-hack.vercel.app` |
 | Project summary | A few sentences (up to 600 characters): what you built and who it's for, then the 1–3 things that make it stand out | "An agent that fact-checks any article against public sources. It splits claims, cross-checks several APIs and re-searches when sources disagree." |
 
-**Use the short `.vercel.app` address, not a deployment link.** Vercel also shows long addresses such as `my-hack-a1b2c3-yourname.vercel.app`. Those point to one specific build and may ask visitors to log in to Vercel. Evaluators would hit a login wall.
+> [!WARNING] **Use the short `.vercel.app` address, not a deployment link.** Vercel also shows long addresses such as `my-hack-a1b2c3-yourname.vercel.app`. Those point to one specific build and may ask visitors to log in to Vercel. Evaluators would hit a login wall.
 
 **Final check before you submit:**
 
@@ -538,9 +538,9 @@ Your app is on a public URL and your code is in a public repo, so these rules ar
 | Keep your own key to yourself | Share keys between participants |
 | Use Accept Edits mode in Cursor or Claude Code, and review changes | Let an AI agent run fully unattended on your work laptop |
 
-**Protect your budget.** Anyone who finds your URL can use your app, and every use spends your key's budget. The spend cap limits the damage. A simple passcode box in front of your app is a good stretch goal.
+> [!TIP] **Protect your budget.** Anyone who finds your URL can use your app, and every use spends your key's budget. The spend cap limits the damage. A simple passcode box in front of your app is a good stretch goal.
 
-**If your key leaks** (committed to GitHub, posted in chat, shown in a screenshot): tell the organizers immediately so they can disable it and issue a new one. Deleting the file afterwards is not enough, because GitHub keeps the history.
+> [!WARNING] **If your key leaks** (committed to GitHub, posted in chat, shown in a screenshot): tell the organizers immediately so they can disable it and issue a new one. Deleting the file afterwards is not enough, because GitHub keeps the history.
 
 ## Appendix: Supplementary Reading
 
