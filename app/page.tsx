@@ -63,12 +63,12 @@ export default function Home() {
           <div className="grid cols-3">
             <div className="card white">
               <h3>What to build</h3>
-              <p>Pick one of eight sample use cases, or bring your own idea. Every entry must make real LLM calls at runtime and be live on Vercel.</p>
+              <p>Bring your own idea, or start from one of three samples. Every entry must be an agentic AI solution, ideally a multi-agent workflow, running live on Vercel.</p>
               <p style={{ marginTop: 12 }}><Link href="/use-cases">See the use cases →</Link></p>
             </div>
             <div className="card white">
               <h3>How you&apos;re evaluated</h3>
-              <p>{EVENT.judges} score each live entry against a six-part rubric. Working product, effective use of Claude/Cursor and business value carry the most weight.</p>
+              <p>{EVENT.judges} score each live entry against a five-part rubric. Completeness (including multi-agent orchestration) and creativity carry the most weight.</p>
               <p style={{ marginTop: 12 }}><Link href="/rules">Rules &amp; rubric →</Link></p>
             </div>
             <div className="card red">

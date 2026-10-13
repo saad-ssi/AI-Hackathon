@@ -2,7 +2,7 @@
 
 This guide takes you from an empty laptop to a live public URL for your hackathon app, one step at a time. You don't need any prior experience with Vercel, GitHub or web hosting. Expect about 45 minutes the first time.
 
-The main steps build the app in JavaScript (Next.js). Prefer Python, for example for LangGraph? Follow **Building in Python instead** after Step 5 in place of Steps 3 to 5; everything else is shared.
+The main steps build the app in JavaScript (Next.js). Prefer Python, for example for LangGraph? Follow **Building in Python instead** after Step 5 in place of Steps 3 to 5; everything else is shared. An optional appendix at the end shows simple multi-agent patterns with working code.
 
 ## How it fits together
 
@@ -367,7 +367,7 @@ llm = ChatOpenAI(
 
 | Limit | What it means for you |
 | --- | --- |
-| 5 minutes per request | A request that runs longer is cut off with a `504` error. Run long agent loops one step per request (see Tips for agentic apps). |
+| 5 minutes per request | A request that runs longer is cut off with a `504` error. Run long agent loops one step per request (see the appendix). |
 | Nothing runs between requests | No background jobs, and memory isn't kept from one request to the next. Store conversation or agent state in the browser or a database, not in Python variables. |
 | 500 MB for your code and libraries | Lightweight libraries (FastAPI, LangGraph, LangChain, pandas) are fine. Large ML libraries such as PyTorch or TensorFlow won't fit; call models through LiteLLM instead. |
 | 4.5 MB per request or response | Large file uploads won't work. Keep uploads small. |
@@ -522,7 +522,7 @@ Most problems are a missing environment variable or a typo. Check the logs first
 | Logs show `401` or `Authentication Error` | Wrong or expired key | Re-copy the key. If it still fails, ask the organizers. |
 | Logs show `model not found` or `Invalid model name` | `LITELLM_MODEL` doesn't match an allowed model | Use a name from the list in Step 2. |
 | Logs show `budget exceeded` | Your key reached its spend cap | Contact the organizers. Avoid loops that call the model endlessly. |
-| Logs show a timeout, or the page shows `504` | One request ran longer than Vercel allows | See Tips for agentic apps below. |
+| Logs show a timeout, or the page shows `504` | One request ran longer than Vercel allows | See "Limits to plan for" in the appendix. |
 | You changed a setting but nothing changed | No redeploy after changing an environment variable | **Deployments → ⋯ → Redeploy**. |
 | Evaluators or friends see a Vercel login page | You shared a deployment-specific URL | Share the short `.vercel.app` production address (Step 9). |
 
@@ -542,22 +542,137 @@ Your app is on a public URL and your code is in a public repo, so these rules ar
 
 **If your key leaks** (committed to GitHub, posted in chat, shown in a screenshot): tell the organizers immediately so they can disable it and issue a new one. Deleting the file afterwards is not enough, because GitHub keeps the history.
 
-## Tips for agentic apps
+## Appendix: Supplementary Reading
 
-Agents make many model calls in a loop, which brings two things to plan for: tool calling and time limits.
+### Building multi-agent apps
 
-**Tool calling works through LiteLLM.** The gateway uses the same request format as OpenAI, including `tools`, for models that support it. An agent loop looks like this:
+You don't need this appendix to deploy. It's reading for when you start building your real entry: an **agentic AI** app, ideally a **multi-agent workflow**. Use as much or as little of it as helps.
 
-1. Send the model the user's goal plus a list of tools it may use, such as `search_wikipedia`.
-2. The model replies asking to call a tool, with arguments.
-3. Your API route runs that tool (for example, fetches a public API) and sends the result back to the model.
-4. Repeat until the model gives a final answer.
+**No framework required.** An agent is simply a function with its own role (a system prompt) that makes its own LLM call through your LiteLLM key, and can use tools such as public APIs. Your code is the orchestrator: it decides which agents run, in what order, in parallel or in sequence, and what each one receives. You can build everything below with the `openai` library you already installed.
 
-The free **Vercel AI SDK** handles this loop and streaming for you: install `ai` and `@ai-sdk/openai`, then point its provider at your `LITELLM_BASE_URL` and `LITELLM_API_KEY`. Ask Cursor or Claude Code to set it up; they know it well. In Python, **LangGraph** does the same job: give it the `llm` from the Python section and your tools.
+| Pattern | How it works | Example |
+| --- | --- | --- |
+| Pipeline | Agents run in order, each passing its output to the next | Extractor → researchers → verifier (Fact-Checking Agents) |
+| Parallel | Several agents work at the same time; another combines their results | "For" and "against" agents, then a moderator (Skeptical Debate Partner) |
+| Critic loop | A worker agent produces something; a critic agent reviews it and sends it back until it passes | Analyst and critic (Prior-Art Scout) |
 
-**Mind Vercel's time limit.** On the free plan each request to your server code can run for at most 5 minutes, in JavaScript and Python alike. If one request runs the whole agent loop, it can be cut off with a `504` error. Two fixes:
+**JavaScript: agents in sequence, with a critic loop.** Create `app/api/agents/route.ts`:
 
-- **One step per request:** the page calls your API route once per agent step and shows each step as it arrives. This also gives evaluators the visible step-by-step trace they will look for.
-- **Stream progress:** send partial results to the page as they happen. The AI SDK does this for you in JavaScript; in Python, use FastAPI's `StreamingResponse`.
+```ts
+import OpenAI from "openai";
 
-**Limit loops.** Always cap the number of steps (for example, 10), so a confused agent can't spend your whole budget.
+// One agent = a role (system prompt) + a call to the model through LiteLLM
+async function runAgent(role: string, input: string) {
+  const client = new OpenAI({
+    apiKey: process.env.LITELLM_API_KEY,
+    baseURL: process.env.LITELLM_BASE_URL,
+  });
+  const res = await client.chat.completions.create({
+    model: process.env.LITELLM_MODEL!,
+    messages: [
+      { role: "system", content: role },
+      { role: "user", content: input },
+    ],
+  });
+  return res.choices[0].message.content ?? "";
+}
+
+export async function POST(req: Request) {
+  const { topic } = await req.json();
+  const steps: { agent: string; output: string }[] = [];
+
+  let draft = await runAgent("You are a writer. Write a short, factual answer.", topic);
+  steps.push({ agent: "Writer", output: draft });
+
+  for (let round = 0; round < 3; round++) { // cap the loop so it can't run away
+    const review = await runAgent(
+      "You are a strict critic. Reply APPROVED if the answer is accurate and clear; otherwise list what to fix.",
+      `Question: ${topic}\n\nAnswer: ${draft}`,
+    );
+    steps.push({ agent: "Critic", output: review });
+    if (review.trim().startsWith("APPROVED")) break;
+
+    draft = await runAgent(
+      "You are a writer. Rewrite the answer using the critic's feedback.",
+      `Question: ${topic}\n\nAnswer: ${draft}\n\nFeedback: ${review}`,
+    );
+    steps.push({ agent: "Writer", output: draft });
+  }
+
+  // Show `steps` on your page so evaluators can see the agents working together
+  return Response.json({ answer: draft, steps });
+}
+```
+
+**JavaScript: agents in parallel.** Using the same `runAgent`, start independent agents together with `Promise.all`, then hand their results to the next agent:
+
+```ts
+const [pro, con] = await Promise.all([
+  runAgent("Argue FOR the claim in 3 bullet points.", claim),
+  runAgent("Argue AGAINST the claim in 3 bullet points.", claim),
+]);
+const verdict = await runAgent(
+  "You are a neutral moderator. Weigh both sides and give a short verdict.",
+  `Claim: ${claim}\n\nFor:\n${pro}\n\nAgainst:\n${con}`,
+);
+```
+
+**Python: the same idea, no framework.** Add this to the `app.py` from the Python section. The two debaters run in parallel with `asyncio.gather`, then the moderator runs after them:
+
+```python
+import asyncio
+
+from openai import AsyncOpenAI
+
+
+async def run_agent(role: str, task: str) -> str:
+    client = AsyncOpenAI(api_key=os.environ["LITELLM_API_KEY"], base_url=os.environ["LITELLM_BASE_URL"])
+    res = await client.chat.completions.create(
+        model=os.environ["LITELLM_MODEL"],
+        messages=[{"role": "system", "content": role}, {"role": "user", "content": task}],
+    )
+    return res.choices[0].message.content or ""
+
+
+class DebateRequest(BaseModel):
+    claim: str
+
+
+@app.post("/api/debate")
+async def debate(req: DebateRequest):
+    pro, con = await asyncio.gather(  # parallel
+        run_agent("Argue FOR the claim in 3 bullet points.", req.claim),
+        run_agent("Argue AGAINST the claim in 3 bullet points.", req.claim),
+    )
+    verdict = await run_agent(  # then in sequence
+        "You are a neutral moderator. Weigh both sides and give a short verdict.",
+        f"Claim: {req.claim}\n\nFor:\n{pro}\n\nAgainst:\n{con}",
+    )
+    # Show the steps on your page so evaluators can see the agents working together
+    return {"answer": verdict, "steps": [["For", pro], ["Against", con], ["Moderator", verdict]]}
+```
+
+**Give your agents tools.** Agents get much stronger when they can act: search, fetch data, run checks. The simplest way is in your own code: fetch the data (for example from a public API), then pass it to the agent in its input. For agents that decide **for themselves** when to use a tool, LiteLLM supports tool calling (the `tools` option) on models that support it: the model asks for a tool with arguments, your code runs it and sends back the result, and this repeats until the model answers. Ask the organizers which models support tools.
+
+**Optional helpers.** You don't need these, but they save code for bigger builds. Use them only if they help you:
+
+| Helper | Language | Saves you | Good for |
+| --- | --- | --- | --- |
+| Plain code (as above) | Both | Nothing to learn | Most entries: sequences, parallel agents, critic loops |
+| Vercel AI SDK (`ai`, `@ai-sdk/openai`) | JavaScript | Writing the tool-calling loop and streaming yourself | Agents that choose their own tools; showing output as it's written |
+| LangGraph (`langgraph`) | Python (also JavaScript) | Managing shared state, loops and branching | Larger workflows with many agents and conditional routes |
+
+Both helpers work with LiteLLM: point them at your `LITELLM_BASE_URL` and `LITELLM_API_KEY`, as in the Python section's LangGraph snippet. Cursor and Claude Code know both well.
+
+**Show the agents at work.** Display each agent's steps in your app, as the examples above collect them. Evaluators score multi-agent orchestration under Completeness, and they can only score what they can see.
+
+**Limits to plan for**
+
+| Limit | What it means | How to handle it |
+| --- | --- | --- |
+| 5 minutes per request (free plan) | A long chain of agents in one request can be cut off with a `504` error | Run independent agents in parallel, or run one agent step per request and let the page drive the sequence |
+| Nothing is kept between requests | No memory, background jobs or long-running agents on the server | Keep state in the browser or a database; every run starts from a request |
+| Every agent call spends your LiteLLM budget | Five agents means five or more calls per run, and loops multiply that | Cap rounds and the number of agents (as the examples do); keep prompts short |
+| Request rate limits on your key | Many agents at once can trigger "too many requests" errors | Keep parallelism moderate, and retry after a short wait |
+| Calls take seconds each | Six agents in sequence can take 30+ seconds | Parallelise where you can, and show progress so the app doesn't look frozen |
+| Tool calling depends on the model | Not every model supports `tools` | Check with the organizers which models do |

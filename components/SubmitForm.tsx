@@ -8,6 +8,7 @@ export default function SubmitForm({ useCases }: { useCases: Option[] }) {
   const [status, setStatus] = useState<"idle" | "saving" | "done">("idle");
   const [error, setError] = useState("");
   const [version, setVersion] = useState(1);
+  const [emailed, setEmailed] = useState(false);
   const [pitchLen, setPitchLen] = useState(0);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -33,6 +34,7 @@ export default function SubmitForm({ useCases }: { useCases: Option[] }) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Submission failed.");
       setVersion(data.version ?? 1);
+      setEmailed(Boolean(data.emailed));
       setStatus("done");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Submission failed.");
@@ -45,6 +47,7 @@ export default function SubmitForm({ useCases }: { useCases: Option[] }) {
       <div style={{ border: "1px solid var(--line)", padding: 24, borderRadius: 4 }}>
         <div className="alert ok">
           <strong>{version > 1 ? `Resubmission received (version ${version}).` : "Submission received!"}</strong>
+          {emailed && <> We&apos;ve emailed you a confirmation.</>}
         </div>
         <p>Your latest submission is the one that will be evaluated. You can resubmit any time before the deadline.</p>
         <p>Keep your app live and working until winners are announced: evaluators open your live URL directly.</p>

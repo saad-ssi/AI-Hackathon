@@ -4,11 +4,11 @@
 export const EVENT = {
   name: "AI Hackathon 2026",
   org: "Strategic Systems International",
-  tagline: "Build with AI. Ship AI products.",
+  tagline: "Build agentic AI. Ship it live.",
   objective:
-    "Promote AI-driven development across SSI by building real AI-based products.",
+    "Promote AI-driven development across SSI by building real agentic AI products.",
   objectiveDetail:
-    "Every participant builds an AI-powered application and ships it live for leadership to evaluate.",
+    "Every participant builds an agentic AI application, ideally a multi-agent workflow, and ships it live for leadership to evaluate.",
   prizes: "Top 3 winners receive prizes. Prize details: TBD.",
   judges: "Upper management",
   expectedParticipants: "~100",
@@ -67,8 +67,8 @@ export function allowedDomains(): string[] {
 }
 
 export const AT_A_GLANCE = [
+  { big: "Agentic AI", small: "Multi-agent workflows strongly encouraged" },
   { big: "Individual", small: "One person, one product" },
-  { big: EVENT.expectedParticipants, small: "Expected participants" },
   { big: "1 weekend", small: "Friday kickoff to Sunday deadline" },
   { big: "Claude + Cursor", small: "Build tools, already licensed org-wide" },
   { big: "LiteLLM", small: "Personal API key for model access" },
@@ -87,8 +87,8 @@ export const STEPS = [
 
 export const MUST_HAVES = [
   {
-    title: "Make real LLM calls at runtime",
-    text: "Use your LiteLLM key so your live app calls an AI model to score, summarise, classify or reason, not keyword rules.",
+    title: "Build an agentic AI solution",
+    text: "Your app uses AI agents that plan, call tools or APIs and act on the results, live through your LiteLLM key, not a single prompt. Multi-agent workflows (agents with distinct roles handing work to each other) are strongly encouraged and score higher.",
   },
   {
     title: "Use public or made-up data only",
@@ -99,8 +99,8 @@ export const MUST_HAVES = [
     text: "A working public URL that evaluators can open and use. Build in JavaScript or Python (FastAPI/Flask); Streamlit and Gradio can't run on Vercel.",
   },
   {
-    title: "Meet a minimum bar, then stretch",
-    text: "A working core first; stretch goals earn extra credit.",
+    title: "Working core first, then stretch",
+    text: "Get one agent flow working end to end, then add agents, tools and polish. Showing each agent's steps in your app helps evaluators score the orchestration.",
   },
 ];
 
@@ -112,77 +112,45 @@ export type UseCase = {
 
 export const USE_CASES: UseCase[] = [
   {
-    id: "good-news-wire",
-    title: "Good News Wire",
-    description:
-      "Pulls headlines from named public sources, uses an LLM to score and summarise each for positivity, and publishes a clean reading feed.",
-  },
-  {
-    id: "conversational-bi",
-    title: "Conversational BI Analyst",
-    description:
-      "Chat over a sample business dataset: ask questions in plain English and get answers backed by charts.",
-  },
-  {
-    id: "akinator",
-    title: "Akinator Simulator",
-    description:
-      "The AI plays 20 questions, asking targeted follow-ups to narrow down what you're thinking of, then reveals its guess.",
-  },
-  {
-    id: "reimbursement",
-    title: "Medical & Gym Reimbursement",
-    description:
-      "Upload receipts; AI extracts and validates details, fills the claim form and flags anything unusual. Replaces a manual SSI process.",
-  },
-  {
-    id: "debate-partner",
-    title: "Skeptical Debate Partner",
-    description:
-      "Two AI personas argue for and against any claim live, and you can jump in to challenge either side.",
-  },
-  {
-    id: "adventure",
-    title: "Choose-Your-Own-Adventure",
-    description:
-      "Describe a genre and get a branching story generated live, with new choices and consequences as you go.",
-  },
-  {
     id: "fact-checker",
-    title: "Fact-Checking Agent",
+    title: "Fact-Checking Agents",
     description:
-      "Paste any article or post. The agent splits it into individual factual claims, searches free public sources for each one, cross-checks the evidence and searches again whenever sources disagree.",
+      "Paste any article. An extractor agent splits it into factual claims, researcher agents check each claim against free public sources (e.g. Wikipedia, World Bank data), and a verifier agent weighs the evidence, sends researchers back when sources disagree, and returns a verdict with links for every claim.",
   },
   {
     id: "prior-art-scout",
     title: "Prior-Art Scout",
     description:
-      "Describe an invention or product idea. The agent searches patents and research papers, sharpens its search terms based on what it finds, and keeps going until the results stop improving.",
+      "Describe an invention or product idea. A search agent queries patents and research papers (PatentsView, OpenAlex, arXiv), an analyst agent ranks the closest matches and explains the overlap, and a critic agent challenges the ranking and sends the search back with sharper terms until the results stop improving.",
+  },
+  {
+    id: "debate-partner",
+    title: "Skeptical Debate Partner",
+    description:
+      "Pick any claim or decision. A 'for' agent and an 'against' agent each research and argue their side live, while a moderator agent keeps the debate on track, scores each round and writes the final summary. You can jump in to challenge either side.",
   },
 ];
 
 export const USE_CASES_NOTE = {
   title: "These are starting points, not limits",
   text:
-    "The use cases above are only samples. You have the freedom to innovate: change them, combine them or take them somewhere new. " +
-    "You can also enhance any of them with agentic AI, for example an agent that plans its own steps, uses tools or public APIs, " +
-    "checks its results and retries when something fails. Doing so can strengthen your score.",
+    "The samples are only examples: bring your own idea, or change, combine or extend them. Whatever you build, " +
+    "the more real work your agents do (planning, using tools, checking each other's results), the stronger your Completeness score.",
 };
 
 export const OWN_IDEA = {
   id: "own-idea",
   title: "Bring your own idea",
   description:
-    "Have something better? Build it. Any AI-powered product is welcome if it meets the four must-haves, and it's evaluated on exactly the same rubric as the sample use cases.",
+    "The recommended path. Build any agentic AI product you believe in, ideally with several agents that have distinct roles. It must meet the four must-haves and is evaluated on exactly the same rubric as the samples.",
 };
 
 export const RUBRIC = [
-  { criterion: "Working, live product", weight: 20 },
-  { criterion: "Effective use of Claude/Cursor", weight: 20 },
-  { criterion: "Business value of the proposed solution", weight: 20 },
-  { criterion: "Quality and creativity of the solution approach", weight: 15 },
-  { criterion: "Execution quality", weight: 15 },
-  { criterion: "Presentation", weight: 10 },
+  { criterion: "Completeness (including multi-agent orchestration)", weight: 25 },
+  { criterion: "Creativity & uniqueness", weight: 25 },
+  { criterion: "Technical execution", weight: 20 },
+  { criterion: "Presentation & live product", weight: 15 },
+  { criterion: "Business value of the proposed solution", weight: 15 },
 ];
 
 export const RULES = [
@@ -210,7 +178,7 @@ export const TOOLS = [
     sub: "Cursor or Claude Code",
     items: [
       "Build in JavaScript (Next.js) or Python (FastAPI or Flask, e.g. with LangGraph)",
-      "Use them exactly as you do day to day",
+      "Agents can be plain code; LangGraph or the Vercel AI SDK are optional helpers",
       "Already licensed org-wide; nothing new to install",
       "Recommended: Accept Edits mode, not full auto",
     ],
@@ -220,7 +188,7 @@ export const TOOLS = [
     sub: "LiteLLM API key",
     items: [
       "Personal key issued to each participant",
-      "Gives your app real model calls at runtime",
+      "Gives your agents real model calls at runtime",
       "Store it in Vercel's settings, never in code",
     ],
   },

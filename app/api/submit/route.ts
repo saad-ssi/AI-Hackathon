@@ -1,5 +1,6 @@
 import { submissionsOpen } from "@/lib/config";
 import { ensureSchema, sql, type SubmissionVersion } from "@/lib/db";
+import { sendSubmissionEmail } from "@/lib/email";
 import { clean, liveUrlError, normalizeEmail, repoUrlError, USE_CASE_OPTIONS } from "@/lib/validate";
 
 export async function POST(req: Request) {
@@ -57,7 +58,10 @@ export async function POST(req: Request) {
         project_name = EXCLUDED.project_name, use_case = EXCLUDED.use_case, repo_url = EXCLUDED.repo_url,
         live_url = EXCLUDED.live_url, pitch = EXCLUDED.pitch, version = EXCLUDED.version, updated_at = now()`;
 
-    return Response.json({ ok: true, version: v.version });
+    // Confirmation email; failures are logged and never block the submission
+    const emailed = await sendSubmissionEmail({ email, projectName, useCase, repoUrl, liveUrl, pitch, version: v.version });
+
+    return Response.json({ ok: true, version: v.version, emailed });
   } catch (err) {
     console.error("Submission failed:", err);
     return Response.json({ error: "Something went wrong saving your submission. Please try again." }, { status: 500 });

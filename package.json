@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@aws-sdk/client-sesv2": "^3.700.0",
     "@neondatabase/serverless": "^1.0.0",
     "marked": "^15.0.0",
     "next": "^15.5.0",

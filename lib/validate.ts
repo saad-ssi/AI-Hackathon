@@ -46,8 +46,8 @@ export function liveUrlError(v: string): string | null {
 }
 
 export const USE_CASE_OPTIONS = [
-  ...USE_CASES.map((u) => ({ id: u.id, title: u.title })),
   { id: OWN_IDEA.id, title: "My own idea" },
+  ...USE_CASES.map((u) => ({ id: u.id, title: u.title })),
 ];
 
 export function useCaseTitle(id: string): string {

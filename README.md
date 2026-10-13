@@ -45,9 +45,26 @@ Vercel project → **Settings → Environment Variables** (see `.env.example`):
 Empty dates show as **TBD** and keep the forms open. Once a close date passes, that form closes automatically.
 Then **Deployments → ⋯ → Redeploy** so the new values take effect.
 
-### 5. Test before announcing
+### 5. Confirmation emails (Amazon SES, optional)
+Registrations and submissions each send a confirmation email, with a copy to the organizers. Emails stay off until these settings exist; a failed email never blocks a registration or submission.
+
+1. **Sender:** in the AWS console, open **Amazon SES → Identities → Create identity**. Best: verify the whole `ssidecisions.com` **domain** (IT adds the DKIM DNS records SES shows), so emails pass spam checks and can reach any colleague even while the account is in the SES sandbox. Quicker: verify a single address such as `hackathon@ssidecisions.com`, then request **production access** (SES → Account dashboard) so it can email unverified recipients.
+2. **Key:** in **IAM → Users → Create user**, attach a policy that allows only `ses:SendEmail`, then create an **access key** for that user.
+3. Add these in Vercel → **Environment Variables** (Vercel reserves the `AWS_*` names, so they use an `SES_` prefix), then redeploy:
+
+| Name | Value |
+| --- | --- |
+| `SES_REGION` | The SES region you set up in, e.g. `us-east-1` |
+| `SES_ACCESS_KEY_ID` | The IAM user's access key ID |
+| `SES_SECRET_ACCESS_KEY` | The IAM user's secret access key |
+| `EMAIL_FROM` | The verified sender: `AI Hackathon <alerts@ssidecisions.com>`. It's a no-reply address, and every email says so |
+| `CONTACT_EMAIL` | Who emails tell people to contact with questions: `sjoiya@ssidecisions.com, gali@ssidecisions.com` (comma-separated) |
+| `EMAIL_BCC` | Organizer inbox(es) that get a copy of every email (comma-separated) |
+| `SITE_URL` | `https://ssi-ai-hackathon.vercel.app` (used in email links) |
+
+### 6. Test before announcing
 1. Register with your own `@ssidecisions.com` email, then submit a test entry.
-2. Check both appear in `/admin`, and that the CSV downloads open in Excel.
+2. Check both appear in `/admin`, that the CSV downloads open in Excel, and (if emails are set up) that both confirmation emails arrive.
 3. Delete the test rows afterwards (Neon console → **Tables**).
 
 ## Where the data lives, and keeping copies

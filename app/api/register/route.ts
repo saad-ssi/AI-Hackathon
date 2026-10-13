@@ -1,5 +1,6 @@
 import { registrationOpen } from "@/lib/config";
 import { ensureSchema, sql } from "@/lib/db";
+import { sendRegistrationEmail } from "@/lib/email";
 import { clean, emailError, normalizeEmail } from "@/lib/validate";
 
 export async function POST(req: Request) {
@@ -36,7 +37,10 @@ export async function POST(req: Request) {
       ON CONFLICT (email) DO UPDATE
         SET name = EXCLUDED.name, department = EXCLUDED.department, updated_at = now()`;
 
-    return Response.json({ ok: true, updated });
+    // Confirmation email; failures are logged and never block the registration
+    const emailed = await sendRegistrationEmail({ email, name, department }, updated);
+
+    return Response.json({ ok: true, updated, emailed });
   } catch (err) {
     console.error("Registration failed:", err);
     return Response.json({ error: "Something went wrong saving your registration. Please try again." }, { status: 500 });

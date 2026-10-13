@@ -10,7 +10,7 @@ export default function UseCases() {
         <div className="wrap">
           <h1>What to build</h1>
           <p className="lead">
-            Choose one of the sample use cases below, or bring your own idea. Every entry is evaluated on the same rubric.
+            Build an agentic AI solution, ideally a multi-agent workflow. Bring your own idea, or start from one of the samples below. Every entry is evaluated on the same rubric.
           </p>
         </div>
       </section>
@@ -32,8 +32,13 @@ export default function UseCases() {
 
       <section className="section">
         <div className="wrap">
-          <h2>Sample use cases</h2>
-          <div className="grid cols-3">
+          <h2>Your idea, or a sample</h2>
+          <div className="grid cols-2">
+            <div className="card red">
+              <div className="badge white">+</div>
+              <h3>{OWN_IDEA.title}</h3>
+              <p>{OWN_IDEA.description}</p>
+            </div>
             {USE_CASES.map((u, i) => (
               <div className="card" key={u.id}>
                 <div className="badge">{i + 1}</div>
@@ -41,11 +46,6 @@ export default function UseCases() {
                 <p className="muted">{u.description}</p>
               </div>
             ))}
-            <div className="card red">
-              <div className="badge white">+</div>
-              <h3>{OWN_IDEA.title}</h3>
-              <p>{OWN_IDEA.description}</p>
-            </div>
           </div>
           <div className="card white" style={{ marginTop: 24 }}>
             <h3>{USE_CASES_NOTE.title}</h3>

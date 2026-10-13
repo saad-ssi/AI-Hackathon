@@ -7,6 +7,7 @@ export default function RegisterForm({ domain }: { domain: string }) {
   const [status, setStatus] = useState<"idle" | "saving" | "done">("idle");
   const [error, setError] = useState("");
   const [updated, setUpdated] = useState(false);
+  const [emailed, setEmailed] = useState(false);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -28,6 +29,7 @@ export default function RegisterForm({ domain }: { domain: string }) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Registration failed.");
       setUpdated(Boolean(data.updated));
+      setEmailed(Boolean(data.emailed));
       setStatus("done");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registration failed.");
@@ -40,6 +42,7 @@ export default function RegisterForm({ domain }: { domain: string }) {
       <div style={{ border: "1px solid var(--line)", padding: 24, borderRadius: 4 }}>
         <div className="alert ok">
           <strong>{updated ? "Your registration was updated." : "You're registered!"}</strong>
+          {emailed && <> We&apos;ve emailed you a confirmation.</>}
         </div>
         <p>Next steps:</p>
         <ol>
