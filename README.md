@@ -34,7 +34,8 @@ Vercel project → **Settings → Environment Variables** (see `.env.example`):
 
 | Name | Value |
 | --- | --- |
-| `ADMIN_PASSWORD` | A long password for `/admin` |
+| `ADMIN_PASSWORD` | A long password for the admin view of `/admin` |
+| `ADMINS` | Who may use the admin view, as `email=Name` entries separated by commas, e.g. `sjoiya@ssidecisions.com=Saad, gali@ssidecisions.com=Gali` |
 | `JUDGE_PASSWORD` | A different password you give the judges |
 | `JUDGES` | Who may judge, as `email=Name` entries separated by commas, e.g. `jane@ssidecisions.com=Jane Smith, gali@ssidecisions.com=Gali` |
 | `ALLOWED_EMAIL_DOMAINS` | `ssidecisions.com` (comma-separate to allow more) |
@@ -71,7 +72,7 @@ Registrations and submissions each send a confirmation email, with a copy to the
 
 ## Judging
 Judges open `/admin` and sign in with **their email** (it must be listed in `JUDGES`) and the **judge password**. They see every submission with links to the live app and repo. They score each of the five criteria from 1 to 10 (all equal) with an optional comment, and can update their scores any time. Judges see only their own scores. Scores are stored by judge email; the names shown come from `JUDGES`, and removing an email from `JUDGES` locks that judge out.
-Admins (admin password) see a **Results** table: each entry's average total across judges (out of 50), the number of judges who scored it, per-criterion averages and a ranking, plus a scores CSV.
+Admins sign in with **their email** (it must be listed in `ADMINS`) and the **admin password**; removing an email from `ADMINS` locks that admin out. They see a **Results** table: each entry's average total across judges (out of 50), the number of judges who scored it, per-criterion averages and a ranking, plus a scores CSV.
 
 ## Where the data lives, and keeping copies
 - **Neon is separate from the website.** If the site breaks, the data is untouched. Open it from Vercel → **Storage** → your database → **Open in Neon**, then **Tables** to browse or **SQL Editor** to query.

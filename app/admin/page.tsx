@@ -1,7 +1,7 @@
 import AdminActions, { LogoutButton } from "@/components/AdminActions";
 import AdminLogin from "@/components/AdminLogin";
 import ScoreForm from "@/components/ScoreForm";
-import { getJudge, isAdmin, judgeConfigured, judgeList } from "@/lib/auth";
+import { adminConfigured, getAdmin, getJudge, judgeConfigured, judgeList } from "@/lib/auth";
 import { CRITERIA, SCORE_MAX, SCORE_MIN } from "@/lib/config";
 import { ensureSchema, sql, type Registration, type Score, type Submission } from "@/lib/db";
 import { useCaseTitle } from "@/lib/validate";
@@ -19,18 +19,19 @@ const MAX_TOTAL = CRITERIA.length * SCORE_MAX;
 const criteria = CRITERIA.map((c) => ({ key: c.key, label: c.label }));
 
 export default async function Admin() {
-  const [admin, judge] = await Promise.all([isAdmin(), getJudge()]);
+  const [admin, judge] = await Promise.all([getAdmin(), getJudge()]);
 
   if (!admin && !judge) {
     return (
       <section className="section">
         <div className="wrap" style={{ maxWidth: 520 }}>
           <h1>Admin &amp; judging</h1>
-          {process.env.ADMIN_PASSWORD ? (
-            <AdminLogin judgesEnabled={judgeConfigured()} />
-          ) : (
-            <div className="alert err">ADMIN_PASSWORD is not set. Add it in Vercel&apos;s Environment Variables and redeploy.</div>
+          {!adminConfigured() && (
+            <div className="alert err">
+              No admins are set up yet. Add ADMIN_PASSWORD and an ADMINS list in Vercel&apos;s Environment Variables, then redeploy.
+            </div>
           )}
+          {(adminConfigured() || judgeConfigured()) && <AdminLogin />}
         </div>
       </section>
     );
@@ -91,7 +92,7 @@ export default async function Admin() {
           <h1>Admin &amp; judging</h1>
           <div className="btn-row" style={{ marginTop: 0 }}>
             <span className="muted small">
-              Signed in as {[admin && "admin", judge && `judge: ${judge.name} (${judge.email})`].filter(Boolean).join(" · ")}
+              Signed in as {[admin && `admin: ${admin.name} (${admin.email})`, judge && `judge: ${judge.name} (${judge.email})`].filter(Boolean).join(" · ")}
             </span>
             <LogoutButton />
           </div>
