@@ -25,6 +25,15 @@ export type SubmissionVersion = Omit<Submission, "submitted_at" | "updated_at"> 
   created_at: string;
 };
 
+export type Score = {
+  submission_email: string;
+  judge: string;
+  scores: Record<string, number>;
+  total: number;
+  comment: string;
+  updated_at: string;
+};
+
 export function sql() {
   const url = process.env.DATABASE_URL;
   if (!url) throw new Error("DATABASE_URL is not set. Connect a Neon database in Vercel's Storage tab.");
@@ -67,6 +76,16 @@ export function ensureSchema(): Promise<void> {
         live_url TEXT NOT NULL,
         pitch TEXT NOT NULL,
         created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+      )`;
+      // One row per judge per entry; saving again replaces that judge's earlier scores.
+      await q`CREATE TABLE IF NOT EXISTS scores (
+        submission_email TEXT NOT NULL REFERENCES submissions(email),
+        judge TEXT NOT NULL,
+        scores JSONB NOT NULL,
+        total INTEGER NOT NULL,
+        comment TEXT NOT NULL DEFAULT '',
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+        PRIMARY KEY (submission_email, judge)
       )`;
     })().catch((err) => {
       schemaReady = null;

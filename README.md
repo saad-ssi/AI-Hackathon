@@ -11,7 +11,7 @@ Registrations and submissions are stored in a Neon Postgres database, which live
 | `/guide` | Public | Vercel quickstart (from `content/quickstart.md`) |
 | `/register` | Public | Registration form (company emails only) |
 | `/submit` | Public | Submission form; resubmits allowed until the deadline, every version kept |
-| `/admin` | Password | All registrations and submissions, CSV downloads |
+| `/admin` | Password | Admins: registrations, submissions, results and CSV downloads. Judges: score each entry |
 
 ## Set it up (about 20 minutes)
 
@@ -35,6 +35,8 @@ Vercel project → **Settings → Environment Variables** (see `.env.example`):
 | Name | Value |
 | --- | --- |
 | `ADMIN_PASSWORD` | A long password for `/admin` |
+| `JUDGE_PASSWORD` | A different password you give the judges |
+| `JUDGES` | Who may judge, as `email=Name` entries separated by commas, e.g. `jane@ssidecisions.com=Jane Smith, gali@ssidecisions.com=Gali` |
 | `ALLOWED_EMAIL_DOMAINS` | `ssidecisions.com` (comma-separate to allow more) |
 | `EVENT_TIMEZONE` | e.g. `America/Los_Angeles` or `Asia/Karachi` |
 | `REGISTRATION_CLOSES` | e.g. `2026-11-13T18:00:00-08:00`, or leave empty for TBD |
@@ -65,7 +67,11 @@ Registrations and submissions each send a confirmation email, with a copy to the
 ### 6. Test before announcing
 1. Register with your own `@ssidecisions.com` email, then submit a test entry.
 2. Check both appear in `/admin`, that the CSV downloads open in Excel, and (if emails are set up) that both confirmation emails arrive.
-3. Delete the test rows afterwards (Neon console → **Tables**).
+3. Delete the test rows afterwards (Neon console → **SQL Editor**): `TRUNCATE scores, submission_versions, submissions, registrations RESTART IDENTITY;`
+
+## Judging
+Judges open `/admin` and sign in with **their email** (it must be listed in `JUDGES`) and the **judge password**. They see every submission with links to the live app and repo. They score each of the five criteria from 1 to 10 (all equal) with an optional comment, and can update their scores any time. Judges see only their own scores. Scores are stored by judge email; the names shown come from `JUDGES`, and removing an email from `JUDGES` locks that judge out.
+Admins (admin password) see a **Results** table: each entry's average total across judges (out of 50), the number of judges who scored it, per-criterion averages and a ranking, plus a scores CSV.
 
 ## Where the data lives, and keeping copies
 - **Neon is separate from the website.** If the site breaks, the data is untouched. Open it from Vercel → **Storage** → your database → **Open in Neon**, then **Tables** to browse or **SQL Editor** to query.

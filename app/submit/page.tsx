@@ -40,7 +40,7 @@ export default function Submit() {
               <p style={{ marginTop: 12 }}>Stuck? See the <Link href="/guide">guide&apos;s troubleshooting table</Link>.</p>
             </div>
             <div className="card white">
-              <h3>How it will be scored</h3>
+              <h3>How it will be evaluated</h3>
               <Rubric />
             </div>
           </aside>

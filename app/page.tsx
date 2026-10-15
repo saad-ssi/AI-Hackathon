@@ -68,7 +68,7 @@ export default function Home() {
             </div>
             <div className="card white">
               <h3>How you&apos;re evaluated</h3>
-              <p>{EVENT.judges} score each live entry against a five-part rubric. Completeness (including multi-agent orchestration) and creativity carry the most weight.</p>
+              <p>{EVENT.judges} score each live entry on five criteria: completeness (including multi-agent orchestration), creativity & uniqueness, technical execution, presentation & live product, and business value.</p>
               <p style={{ marginTop: 12 }}><Link href="/rules">Rules &amp; rubric →</Link></p>
             </div>
             <div className="card red">

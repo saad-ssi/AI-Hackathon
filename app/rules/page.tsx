@@ -18,7 +18,7 @@ export default function Rules() {
         <div className="wrap">
           <div className="form-layout">
             <div>
-              <h2>Scoring rubric</h2>
+              <h2>Evaluation criteria</h2>
               <Rubric />
             </div>
             <div className="grid">

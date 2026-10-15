@@ -1,18 +1,10 @@
-import { RUBRIC } from "@/lib/config";
+import { CRITERIA } from "@/lib/config";
 
+// The evaluation criteria, listed without weights (all count equally)
 export default function Rubric() {
-  const max = Math.max(...RUBRIC.map((r) => r.weight));
   return (
-    <div className="rubric">
-      {RUBRIC.map((r) => (
-        <div className="rubric-row" key={r.criterion}>
-          <span>{r.criterion}</span>
-          <div className="bar" aria-hidden="true">
-            <span style={{ width: `${(r.weight / max) * 100}%` }} />
-          </div>
-          <b>{r.weight}%</b>
-        </div>
-      ))}
-    </div>
+    <ol className="criteria">
+      {CRITERIA.map((c) => <li key={c.key}>{c.label}</li>)}
+    </ol>
   );
 }

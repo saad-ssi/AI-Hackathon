@@ -145,13 +145,17 @@ export const OWN_IDEA = {
     "The recommended path. Build any agentic AI product you believe in, ideally with several agents that have distinct roles. It must meet the four must-haves and is evaluated on exactly the same rubric as the samples.",
 };
 
-export const RUBRIC = [
-  { criterion: "Completeness (including multi-agent orchestration)", weight: 25 },
-  { criterion: "Creativity & uniqueness", weight: 25 },
-  { criterion: "Technical execution", weight: 20 },
-  { criterion: "Presentation & live product", weight: 15 },
-  { criterion: "Business value of the proposed solution", weight: 15 },
-];
+// Evaluation criteria, all counted equally. Keys are used to store judges' scores, so don't change them.
+export const CRITERIA = [
+  { key: "completeness", label: "Completeness (including multi-agent orchestration)" },
+  { key: "creativity", label: "Creativity & uniqueness" },
+  { key: "technical", label: "Technical execution" },
+  { key: "presentation", label: "Presentation & live product" },
+  { key: "business", label: "Business value of the proposed solution" },
+] as const;
+
+export const SCORE_MIN = 1;
+export const SCORE_MAX = 10;
 
 export const RULES = [
   {
@@ -180,7 +184,6 @@ export const TOOLS = [
       "Build in JavaScript (Next.js) or Python (FastAPI or Flask, e.g. with LangGraph)",
       "Agents can be plain code; LangGraph or the Vercel AI SDK are optional helpers",
       "Already licensed org-wide; nothing new to install",
-      "Recommended: Accept Edits mode, not full auto",
     ],
   },
   {
@@ -189,7 +192,7 @@ export const TOOLS = [
     items: [
       "Personal key issued to each participant",
       "Gives your agents real model calls at runtime",
-      "Store it in Vercel's settings, never in code",
+      "Spend cap per key; usage tracked centrally",
     ],
   },
   {
@@ -198,7 +201,7 @@ export const TOOLS = [
     items: [
       "Sign in with GitHub, import the repo, deploy",
       "Every push redeploys automatically",
-      "Streamlit and Gradio aren't supported on Vercel",
+      "Free Hobby plan with a live public URL",
       "Follow the Guide page step by step",
     ],
   },

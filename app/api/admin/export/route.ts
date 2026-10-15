@@ -1,4 +1,5 @@
-import { isAdmin } from "@/lib/auth";
+import { isAdmin, judgeName } from "@/lib/auth";
+import { CRITERIA } from "@/lib/config";
 import { ensureSchema, sql } from "@/lib/db";
 
 function toCsv(rows: Record<string, unknown>[]): string {
@@ -27,6 +28,24 @@ export async function GET(req: Request) {
       JOIN registrations r ON r.email = s.email ORDER BY s.submitted_at`) as Record<string, unknown>[];
   } else if (type === "versions") {
     rows = (await q`SELECT * FROM submission_versions ORDER BY id`) as Record<string, unknown>[];
+  } else if (type === "scores") {
+    // One row per judge per entry, with each criterion as its own column
+    const raw = (await q`
+      SELECT sc.*, s.project_name, r.name AS participant FROM scores sc
+      JOIN submissions s ON s.email = sc.submission_email
+      JOIN registrations r ON r.email = sc.submission_email
+      ORDER BY s.project_name, sc.judge`) as (Record<string, unknown> & { scores: Record<string, number> })[];
+    rows = raw.map((r) => ({
+      project: r.project_name,
+      participant: r.participant,
+      participant_email: r.submission_email,
+      judge: judgeName(String(r.judge)),
+      judge_email: r.judge,
+      ...Object.fromEntries(CRITERIA.map((c) => [c.label, r.scores?.[c.key] ?? ""])),
+      total: r.total,
+      comment: r.comment,
+      updated_at: r.updated_at,
+    }));
   } else {
     return new Response("Unknown export type", { status: 400 });
   }

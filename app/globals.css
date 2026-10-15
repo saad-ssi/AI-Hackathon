@@ -211,3 +211,22 @@ tr:last-child td { border-bottom: 0; }
 .guide pre { position: relative; padding-right: 72px; }
 .copy-btn { position: absolute; top: 8px; right: 8px; font: inherit; font-size: 12px; font-weight: 700; padding: 4px 10px; border: 0; border-radius: var(--radius); background: #3a3a3a; color: #f1f1f1; cursor: pointer; }
 .copy-btn:hover { background: var(--red); }
+
+/* Evaluation criteria list */
+.criteria { list-style: none; counter-reset: crit; margin: 0; padding: 0; display: grid; gap: 10px; }
+.criteria li { counter-increment: crit; display: flex; align-items: center; gap: 12px; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 14px; font-weight: 700; }
+.criteria li::before { content: counter(crit); display: inline-flex; align-items: center; justify-content: center; flex: none; width: 30px; height: 30px; background: var(--red); color: var(--white); }
+.criteria li:nth-child(even)::before { background: var(--charcoal); }
+
+/* Admin & judging */
+.admin-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+.admin-head h1 { margin: 0; }
+.entry-card { padding: 24px; }
+.entry-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+.entry-head h3 { margin: 0 0 4px; }
+.entry-summary { margin: 12px 0 16px; padding: 12px 14px; background: var(--light); border-radius: var(--radius); }
+.score-form textarea { margin-top: 12px; }
+.score-grid { display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); }
+.score-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 12px; border: 1px solid var(--line); border-radius: var(--radius); font-weight: 700; font-size: 15px; }
+.score-row select { width: 84px; flex: none; }
+.score-actions { display: flex; align-items: center; gap: 16px; margin-top: 12px; flex-wrap: wrap; }
