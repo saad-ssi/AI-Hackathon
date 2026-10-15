@@ -58,12 +58,20 @@ export default async function Admin() {
   const toScore = [...subs].sort((a, b) => Number(mine.has(a.email)) - Number(mine.has(b.email))); // unscored first
 
   // ---------- Admin view: results across judges ----------
+  // Judge columns: everyone listed in JUDGES (in that order), plus anyone who scored but has since been removed
+  const judges = judgeList();
+  const judgeCols = [
+    ...[...judges].map(([email, name]) => ({ email, name })),
+    ...[...new Set(scores.map((x) => x.judge))].filter((e) => !judges.has(e)).map((email) => ({ email, name: `${email} (removed)` })),
+  ];
   const results = subs
     .map((s) => {
       const rows = scores.filter((x) => x.submission_email === s.email);
       const avg = (f: (x: Score) => number) => (rows.length ? rows.reduce((a, x) => a + f(x), 0) / rows.length : null);
       return {
         s,
+        rows,
+        byJudge: new Map(rows.map((x) => [x.judge, x])),
         judges: rows.length,
         total: avg((x) => x.total),
         perCriterion: CRITERIA.map((c) => avg((x) => Number(x.scores?.[c.key]) || 0)),
@@ -71,7 +79,6 @@ export default async function Admin() {
     })
     .sort((a, b) => (b.total ?? -1) - (a.total ?? -1));
   // Every listed judge, with how many entries each has scored (stored scores are keyed by judge email)
-  const judges = judgeList();
   const judgeProgress = [...judges].map(([email, name]) => ({
     email, name, scored: scores.filter((x) => x.judge === email).length,
   }));
@@ -150,25 +157,68 @@ export default async function Admin() {
               <table>
                 <thead>
                   <tr>
-                    <th>Rank</th><th>Project</th><th>Participant</th><th>Judges</th><th>Average total</th>
-                    {CRITERIA.map((c) => <th key={c.key} title={c.label}>{c.label.split(" (")[0]}</th>)}
+                    <th>Rank</th><th>Project</th><th>Participant</th>
+                    {judgeCols.map((j) => <th key={j.email} title={j.email}>{j.name}</th>)}
+                    <th>Average total</th><th>Judges</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {results.length === 0 && <tr><td colSpan={5 + CRITERIA.length} className="muted">No submissions yet.</td></tr>}
+                  {results.length === 0 && <tr><td colSpan={5 + judgeCols.length} className="muted">No submissions yet.</td></tr>}
                   {results.map((r, i) => (
                     <tr key={r.s.email}>
                       <td>{r.total === null ? "–" : i + 1}</td>
                       <td>{r.s.project_name}</td>
                       <td>{r.s.name}</td>
-                      <td>{r.judges}</td>
+                      {judgeCols.map((j) => <td key={j.email}>{r.byJudge.get(j.email)?.total ?? "–"}</td>)}
                       <td><strong>{r.total === null ? "Not scored" : r.total.toFixed(1)}</strong></td>
-                      {r.perCriterion.map((v, j) => <td key={j}>{v === null ? "–" : v.toFixed(1)}</td>)}
+                      <td>{r.judges}/{judges.size}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
+
+            <h3 style={{ marginTop: 28 }}>Score breakdown by project</h3>
+            <p className="muted small">Each judge&apos;s score per criterion (1–{SCORE_MAX}) and comment, with the averages.</p>
+            {results.filter((r) => r.rows.length > 0).length === 0 && <p className="muted">No scores yet.</p>}
+            {results.filter((r) => r.rows.length > 0).map((r) => (
+              <details key={r.s.email} className="fold">
+                <summary>
+                  <span className="fold-title">{r.s.project_name} <span className="muted small">· {r.s.name} · average {r.total?.toFixed(1)}/{MAX_TOTAL}</span></span>
+                  <span className="fold-hint">Show</span>
+                </summary>
+                <div className="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Judge</th>
+                        {CRITERIA.map((c) => <th key={c.key} title={c.label}>{c.label.split(" (")[0]}</th>)}
+                        <th>Total</th><th>Comment</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {judgeCols.filter((j) => r.byJudge.has(j.email)).map((j) => {
+                        const x = r.byJudge.get(j.email)!;
+                        return (
+                          <tr key={j.email}>
+                            <td>{j.name}</td>
+                            {CRITERIA.map((c) => <td key={c.key}>{x.scores?.[c.key] ?? "–"}</td>)}
+                            <td><strong>{x.total}</strong></td>
+                            <td style={{ minWidth: 220 }}>{x.comment || <span className="muted">–</span>}</td>
+                          </tr>
+                        );
+                      })}
+                      <tr>
+                        <td><strong>Average</strong></td>
+                        {r.perCriterion.map((v, k) => <td key={k}><strong>{v === null ? "–" : v.toFixed(1)}</strong></td>)}
+                        <td><strong>{r.total?.toFixed(1)}</strong></td>
+                        <td />
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </details>
+            ))}
 
             <h2 style={{ marginTop: 40 }}>Submissions</h2>
             <div className="table-wrap">
