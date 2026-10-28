@@ -1,5 +1,5 @@
 // Everything participants read on the site lives here. Edit this file to change wording;
-// dates come from environment variables so they can be changed on Vercel without a code change.
+// dates are set below (Pakistan time); a matching environment variable on Vercel overrides any of them without a code change.
 
 export const EVENT = {
   name: "AI Hackathon 2026",
@@ -9,13 +9,26 @@ export const EVENT = {
     "Promote AI-driven development across SSI by building real agentic AI products.",
   objectiveDetail:
     "Every participant builds an agentic AI application, ideally a multi-agent workflow, and ships it live for leadership to evaluate.",
-  prizes: "Top 3 winners receive prizes. Prize details: TBD.",
+  prizes: "Top submissions will receive exciting prizes.",
   judges: "Upper management",
   expectedParticipants: "~100",
 };
 
+// Event dates in Pakistan time (UTC+5). Empty means "TBD".
+const DATES: Record<string, string> = {
+  REGISTRATION_OPENS: "2026-11-02T00:00:00+05:00",
+  REGISTRATION_CLOSES: "2026-11-13T23:59:00+05:00",
+  KICKOFF_AT: "2026-11-28T00:00:00+05:00",
+  SUBMISSIONS_CLOSE: "2026-11-29T23:59:00+05:00",
+  WINNERS_ANNOUNCED: "",
+};
+const TIMEZONE = "Asia/Karachi"; // all dates on the site and in emails show in Pakistan time
+
+// Organizer inboxes that always get a copy of registration and submission emails (plus any in EMAIL_BCC)
+export const ORGANIZER_COPIES = ["gali@ssidecisions.com"];
+
 function envDate(name: string): Date | null {
-  const v = process.env[name]?.trim();
+  const v = process.env[name]?.trim() || DATES[name];
   if (!v) return null;
   const d = new Date(v);
   return isNaN(d.getTime()) ? null : d;
@@ -23,6 +36,7 @@ function envDate(name: string): Date | null {
 
 export function getDates() {
   return {
+    registrationOpens: envDate("REGISTRATION_OPENS"),
     registrationCloses: envDate("REGISTRATION_CLOSES"),
     kickoff: envDate("KICKOFF_AT"),
     submissionsClose: envDate("SUBMISSIONS_CLOSE"),
@@ -32,9 +46,9 @@ export function getDates() {
 
 export function formatDate(d: Date | null): string {
   if (!d) return "TBD";
-  const tz = process.env.EVENT_TIMEZONE?.trim() || "UTC";
+  const tz = TIMEZONE;
   try {
-    return new Intl.DateTimeFormat("en-US", {
+    const text = new Intl.DateTimeFormat("en-US", {
       weekday: "short",
       month: "short",
       day: "numeric",
@@ -44,14 +58,20 @@ export function formatDate(d: Date | null): string {
       timeZone: tz,
       timeZoneName: "short",
     }).format(d);
+    return text.replace(/GMT\+5$/, "PKT");
   } catch {
     return d.toUTCString();
   }
 }
 
+export function registrationNotYetOpen(now = new Date()) {
+  const { registrationOpens } = getDates();
+  return Boolean(registrationOpens && now < registrationOpens);
+}
+
 export function registrationOpen(now = new Date()) {
   const { registrationCloses } = getDates();
-  return !registrationCloses || now < registrationCloses;
+  return !registrationNotYetOpen(now) && (!registrationCloses || now < registrationCloses);
 }
 
 export function submissionsOpen(now = new Date()) {
@@ -69,7 +89,7 @@ export function allowedDomains(): string[] {
 export const AT_A_GLANCE = [
   { big: "Agentic AI", small: "Multi-agent workflows strongly encouraged" },
   { big: "Individual", small: "One person, one product" },
-  { big: "1 weekend", small: "Friday kickoff to Sunday deadline" },
+  { big: "1 weekend", small: "Sat 28 to Sun 29 November" },
   { big: "Claude + Cursor", small: "Build tools, already licensed org-wide" },
   { big: "LiteLLM", small: "Personal API key for model access" },
   { big: "Vercel", small: "Free deployment with a live public URL" },
@@ -82,7 +102,7 @@ export const STEPS = [
   { title: "Deploy", text: "Push to GitHub, deploy on Vercel." },
   { title: "Submit", text: "Repo URL, live URL and a short project summary, here." },
   { title: "Evaluation", text: "Upper management scores each entry." },
-  { title: "Winners", text: "Top 3 winners get the prizes." },
+  { title: "Winners", text: "Top submissions receive exciting prizes." },
 ];
 
 export const MUST_HAVES = [

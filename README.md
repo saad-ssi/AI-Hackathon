@@ -39,13 +39,13 @@ Vercel project → **Settings → Environment Variables** (see `.env.example`):
 | `JUDGE_PASSWORD` | A different password you give the judges |
 | `JUDGES` | Who may judge, as `email=Name` entries separated by commas, e.g. `jane@ssidecisions.com=Jane Smith, gali@ssidecisions.com=Gali` |
 | `ALLOWED_EMAIL_DOMAINS` | `ssidecisions.com` (comma-separate to allow more) |
-| `EVENT_TIMEZONE` | e.g. `America/Los_Angeles` or `Asia/Karachi` |
-| `REGISTRATION_CLOSES` | e.g. `2026-11-13T18:00:00-08:00`, or leave empty for TBD |
-| `KICKOFF_AT` | Same format, or empty |
-| `SUBMISSIONS_CLOSE` | Same format, or empty |
-| `WINNERS_ANNOUNCED` | Same format, or empty |
+| `REGISTRATION_OPENS` | Optional override, e.g. `2026-11-02T00:00:00+05:00` |
+| `REGISTRATION_CLOSES` | Optional override, same format |
+| `KICKOFF_AT` | Optional override, same format |
+| `SUBMISSIONS_CLOSE` | Optional override, same format |
+| `WINNERS_ANNOUNCED` | Optional override, same format |
 
-Empty dates show as **TBD** and keep the forms open. Once a close date passes, that form closes automatically.
+The event dates are set in `lib/config.ts` (`DATES`), in Pakistan time, and every date on the site and in emails shows in Pakistan time (PKT). A date variable on Vercel overrides the one in the code; a date left empty in both shows as **TBD**. Registration opens and closes automatically on its dates, and the submit form closes at the deadline.
 Then **Deployments → ⋯ → Redeploy** so the new values take effect.
 
 ### 5. Confirmation emails (Amazon SES, optional)
@@ -62,7 +62,7 @@ Registrations and submissions each send a confirmation email, with a copy to the
 | `SES_SECRET_ACCESS_KEY` | The IAM user's secret access key |
 | `EMAIL_FROM` | The verified sender: `AI Hackathon <alerts@ssidecisions.com>`. It's a no-reply address, and every email says so |
 | `CONTACT_EMAIL` | Who emails tell people to contact with questions: `sjoiya@ssidecisions.com, gali@ssidecisions.com` (comma-separated) |
-| `EMAIL_BCC` | Organizer inbox(es) that get a copy of every email (comma-separated) |
+| `EMAIL_BCC` | Extra organizer inbox(es) that get a copy of every email (comma-separated). `gali@ssidecisions.com` always gets a copy (`ORGANIZER_COPIES` in `lib/config.ts`) |
 | `SITE_URL` | `https://ssi-ai-hackathon.vercel.app` (used in email links) |
 
 ### 6. Test before announcing

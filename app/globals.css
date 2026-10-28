@@ -54,6 +54,7 @@ code { background: var(--light); padding: 1px 5px; border-radius: 3px; font-size
 .hero { background: var(--charcoal); color: var(--white); padding: 64px 0 56px; }
 .hero h1 { color: var(--white); }
 .hero .lead { color: #e2e2e2; }
+.hero-note { margin: 18px 0 0; color: #f2b8bd; font-weight: 700; }
 .kicker { text-transform: uppercase; letter-spacing: 2px; font-size: 13px; font-weight: 700; color: #f2b8bd; margin-bottom: 12px; }
 .btn-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
 .btn { display: inline-block; border: 0; cursor: pointer; text-decoration: none; font: inherit; font-weight: 700; padding: 12px 22px; border-radius: var(--radius); background: var(--red); color: var(--white); }
@@ -95,7 +96,7 @@ code { background: var(--light); padding: 1px 5px; border-radius: 3px; font-size
 .steps strong { display: block; }
 
 /* Dates */
-.dates { display: grid; gap: 0; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); border: 1px solid var(--line); border-radius: var(--radius); background: var(--white); }
+.dates { display: grid; gap: 0; grid-template-columns: repeat(auto-fit, minmax(min(190px, 100%), 1fr)); border: 1px solid var(--line); border-radius: var(--radius); background: var(--white); }
 .dates > div { padding: 18px 20px; border-right: 1px solid var(--line); }
 .dates > div:last-child { border-right: 0; }
 @media (max-width: 560px) { .dates > div { border-right: 0; border-bottom: 1px solid var(--line); } .dates > div:last-child { border-bottom: 0; } }

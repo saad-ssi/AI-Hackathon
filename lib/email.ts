@@ -1,5 +1,5 @@
 import { SendEmailCommand, SESv2Client } from "@aws-sdk/client-sesv2";
-import { EVENT, formatDate, getDates } from "./config";
+import { EVENT, formatDate, getDates, ORGANIZER_COPIES } from "./config";
 import { useCaseTitle } from "./validate";
 
 // Confirmation emails through Amazon SES. Off until SES_* settings are added in Vercel;
@@ -55,7 +55,8 @@ async function send(to: string, subject: string, body: { text: string; html: str
       endpoint: process.env.SES_ENDPOINT || undefined, // only for local testing
       credentials: { accessKeyId: process.env.SES_ACCESS_KEY_ID!, secretAccessKey: process.env.SES_SECRET_ACCESS_KEY! },
     });
-    const bcc = (process.env.EMAIL_BCC || "").split(",").map((e) => e.trim()).filter(Boolean);
+    const bcc = [...new Set([...(process.env.EMAIL_BCC || "").split(","), ...ORGANIZER_COPIES].map((e) => e.trim().toLowerCase()).filter(Boolean))]
+      .filter((e) => e !== to.toLowerCase());
     await client.send(
       new SendEmailCommand({
         FromEmailAddress: process.env.EMAIL_FROM,

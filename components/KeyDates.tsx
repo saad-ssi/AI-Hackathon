@@ -3,6 +3,7 @@ import { formatDate, getDates } from "@/lib/config";
 export default function KeyDates() {
   const d = getDates();
   const items = [
+    { label: "Registration opens", value: d.registrationOpens },
     { label: "Registration closes", value: d.registrationCloses },
     { label: "Kickoff", value: d.kickoff },
     { label: "Submissions close", value: d.submissionsClose },

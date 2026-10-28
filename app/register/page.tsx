@@ -1,13 +1,14 @@
 import Link from "next/link";
 import KeyDates from "@/components/KeyDates";
 import RegisterForm from "@/components/RegisterForm";
-import { allowedDomains, MUST_HAVES, registrationOpen } from "@/lib/config";
+import { allowedDomains, formatDate, getDates, MUST_HAVES, registrationNotYetOpen, registrationOpen } from "@/lib/config";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Register | AI Hackathon 2026" };
 
 export default function Register() {
   const open = registrationOpen();
+  const notYet = registrationNotYetOpen();
   return (
     <section className="section">
       <div className="wrap">
@@ -20,6 +21,11 @@ export default function Register() {
         <div className="form-layout">
           {open ? (
             <RegisterForm domain={allowedDomains()[0] ?? ""} />
+          ) : notYet ? (
+            <div className="closed">
+              <h3>Registration opens soon</h3>
+              <p>Registration opens on {formatDate(getDates().registrationOpens)}. Come back then to sign up.</p>
+            </div>
           ) : (
             <div className="closed">
               <h3>Registration is closed</h3>

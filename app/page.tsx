@@ -1,12 +1,16 @@
 import Link from "next/link";
 import KeyDates from "@/components/KeyDates";
-import { AT_A_GLANCE, EVENT, registrationOpen, STEPS, submissionsOpen } from "@/lib/config";
+import { AT_A_GLANCE, EVENT, formatDate, getDates, registrationNotYetOpen, registrationOpen, STEPS, submissionsOpen } from "@/lib/config";
 
 export const dynamic = "force-dynamic";
 
 export default function Home() {
   const regOpen = registrationOpen();
-  const subOpen = submissionsOpen();
+  const dates = getDates();
+  const regSoon = registrationNotYetOpen();
+  // The submit button appears from kickoff; the page itself stays reachable
+  const subOpen = submissionsOpen() && (!dates.kickoff || new Date() >= dates.kickoff);
+  const anyTbd = Object.values(dates).some((d) => !d);
   return (
     <>
       <section className="hero">
@@ -19,6 +23,7 @@ export default function Home() {
             {subOpen && <Link href="/submit" className="btn secondary">Submit your entry</Link>}
             <Link href="/guide" className="btn secondary">Read the Vercel guide</Link>
           </div>
+          {regSoon && <p className="hero-note">Registration opens {formatDate(dates.registrationOpens)}.</p>}
         </div>
       </section>
 
@@ -26,7 +31,7 @@ export default function Home() {
         <div className="wrap">
           <h2>Key dates</h2>
           <KeyDates />
-          <p className="muted small">Dates marked TBD will be announced. Evaluation takes place over the weeks after the deadline.</p>
+          <p className="muted small">All times are Pakistan time (PKT).{anyTbd && " Dates marked TBD will be announced."} Evaluation takes place over the weeks after the deadline.</p>
         </div>
       </section>
 

@@ -1,4 +1,4 @@
-import { registrationOpen } from "@/lib/config";
+import { registrationNotYetOpen, registrationOpen } from "@/lib/config";
 import { ensureSchema, sql } from "@/lib/db";
 import { sendRegistrationEmail } from "@/lib/email";
 import { clean, emailError, normalizeEmail } from "@/lib/validate";
@@ -11,7 +11,8 @@ export async function POST(req: Request) {
     if (clean(body.website)) return Response.json({ ok: true, updated: false });
 
     if (!registrationOpen()) {
-      return Response.json({ error: "Registration is closed." }, { status: 403 });
+      const error = registrationNotYetOpen() ? "Registration hasn't opened yet." : "Registration is closed.";
+      return Response.json({ error }, { status: 403 });
     }
 
     const name = clean(body.name, 100);
