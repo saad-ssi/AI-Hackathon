@@ -1,5 +1,5 @@
 import { SendEmailCommand, SESv2Client } from "@aws-sdk/client-sesv2";
-import { EVENT, formatDate, getDates, ORGANIZER_COPIES } from "./config";
+import { EVENT, formatDate, getDates, ORGANIZER_COPIES, winnersText } from "./config";
 import { useCaseTitle } from "./validate";
 
 // Confirmation emails through Amazon SES. Off until SES_* settings are added in Vercel;
@@ -94,7 +94,7 @@ export async function sendRegistrationEmail(r: { email: string; name: string; de
           lines: [
             `Kickoff: ${formatDate(d.kickoff)}`,
             `Submissions close: ${formatDate(d.submissionsClose)}`,
-            `Winners announced: ${formatDate(d.winnersAnnounced)}`,
+            `Winners announced: ${winnersText()}`,
           ],
         },
         {

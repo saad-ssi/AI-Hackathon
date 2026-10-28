@@ -10,7 +10,7 @@ export default function Home() {
   const regSoon = registrationNotYetOpen();
   // The submit button appears from kickoff; the page itself stays reachable
   const subOpen = submissionsOpen() && (!dates.kickoff || new Date() >= dates.kickoff);
-  const anyTbd = Object.values(dates).some((d) => !d);
+  const anyTbd = [dates.registrationOpens, dates.registrationCloses, dates.kickoff, dates.submissionsClose].some((d) => !d);
   return (
     <>
       <section className="hero">

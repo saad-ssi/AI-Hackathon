@@ -86,6 +86,7 @@ code { background: var(--light); padding: 1px 5px; border-radius: 3px; font-size
 .badge.white { background: var(--white); color: var(--red); }
 .tag { display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--red); margin: 12px 0 2px; }
 .card.red .tag { color: #f6d9db; }
+.flag { display: inline-block; margin-top: 4px; padding: 2px 6px; border-radius: 2px; background: #fbe9ea; color: var(--red); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
 .pill { display: inline-block; font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: var(--white); color: var(--red); border: 1px solid var(--red); margin-left: 8px; vertical-align: middle; }
 
 /* Steps */

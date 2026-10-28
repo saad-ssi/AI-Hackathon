@@ -2,7 +2,7 @@ import AdminActions, { LogoutButton } from "@/components/AdminActions";
 import AdminLogin from "@/components/AdminLogin";
 import ScoreForm from "@/components/ScoreForm";
 import { adminConfigured, getAdmin, getJudge, judgeConfigured, judgeList } from "@/lib/auth";
-import { CRITERIA, SCORE_MAX, SCORE_MIN } from "@/lib/config";
+import { CRITERIA, formatDate, getDates, outsideDates, SCORE_MAX, SCORE_MIN } from "@/lib/config";
 import { ensureSchema, sql, type Registration, type Score, type Submission } from "@/lib/db";
 import { useCaseTitle } from "@/lib/validate";
 
@@ -12,7 +12,11 @@ export const metadata = { title: "Admin & judging | AI Hackathon 2026", robots: 
 type SubRow = Submission & { name: string; department: string };
 
 function fmt(ts: string) {
-  return new Date(ts).toISOString().replace("T", " ").slice(0, 16) + " UTC";
+  return formatDate(new Date(ts));
+}
+
+function OutsideDates() {
+  return <><br /><span className="flag">Outside dates</span></>;
 }
 
 const MAX_TOTAL = CRITERIA.length * SCORE_MAX;
@@ -37,6 +41,7 @@ export default async function Admin() {
     );
   }
 
+  const dates = getDates();
   let regs: Registration[] = [];
   let subs: SubRow[] = [];
   let scores: Score[] = [];
@@ -238,7 +243,10 @@ export default async function Admin() {
                       <td><a href={s.repo_url} target="_blank" rel="noreferrer">GitHub</a></td>
                       <td style={{ minWidth: 280 }}>{s.pitch}</td>
                       <td>{s.version}</td>
-                      <td>{fmt(s.updated_at)}</td>
+                      <td>
+                        {fmt(s.updated_at)}
+                        {(outsideDates(s.submitted_at, dates.kickoff, null) || outsideDates(s.updated_at, null, dates.submissionsClose)) && <OutsideDates />}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -258,7 +266,10 @@ export default async function Admin() {
                       <td>{r.name}</td>
                       <td>{r.email}</td>
                       <td>{r.department}</td>
-                      <td>{fmt(r.created_at)}</td>
+                      <td>
+                        {fmt(r.created_at)}
+                        {outsideDates(r.created_at, dates.registrationOpens, dates.registrationCloses) && <OutsideDates />}
+                      </td>
                       <td>{subs.some((s) => s.email === r.email) ? "Yes" : "No"}</td>
                     </tr>
                   ))}

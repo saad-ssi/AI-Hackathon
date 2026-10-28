@@ -22,6 +22,12 @@ const DATES: Record<string, string> = {
   SUBMISSIONS_CLOSE: "2026-11-29T23:59:00+05:00",
   WINNERS_ANNOUNCED: "",
 };
+// Shown while WINNERS_ANNOUNCED has no exact date
+const WINNERS_APPROX = "Mid-December 2026 (approx.)";
+
+// While false, the dates are shown but the forms stay open (for testing; entries outside the dates are
+// flagged on /admin and handled manually). Set ENFORCE_DATES=true on Vercel to close forms on their dates.
+const ENFORCE_DATES = process.env.ENFORCE_DATES?.trim().toLowerCase() === "true";
 const TIMEZONE = "Asia/Karachi"; // all dates on the site and in emails show in Pakistan time
 
 // Organizer inboxes that always get a copy of registration and submission emails (plus any in EMAIL_BCC)
@@ -70,13 +76,26 @@ export function registrationNotYetOpen(now = new Date()) {
 }
 
 export function registrationOpen(now = new Date()) {
+  if (!ENFORCE_DATES) return true;
   const { registrationCloses } = getDates();
   return !registrationNotYetOpen(now) && (!registrationCloses || now < registrationCloses);
 }
 
 export function submissionsOpen(now = new Date()) {
+  if (!ENFORCE_DATES) return true;
   const { submissionsClose } = getDates();
   return !submissionsClose || now < submissionsClose;
+}
+
+export function winnersText(): string {
+  const { winnersAnnounced } = getDates();
+  return winnersAnnounced ? formatDate(winnersAnnounced) : WINNERS_APPROX;
+}
+
+/** True when a timestamp falls before `from` or after `to` (either may be unset). */
+export function outsideDates(ts: string | Date, from: Date | null, to: Date | null): boolean {
+  const t = new Date(ts).getTime();
+  return Boolean((from && t < from.getTime()) || (to && t > to.getTime()));
 }
 
 export function allowedDomains(): string[] {

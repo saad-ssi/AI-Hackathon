@@ -1,4 +1,4 @@
-import { formatDate, getDates } from "@/lib/config";
+import { formatDate, getDates, winnersText } from "@/lib/config";
 
 export default function KeyDates() {
   const d = getDates();
@@ -7,14 +7,14 @@ export default function KeyDates() {
     { label: "Registration closes", value: d.registrationCloses },
     { label: "Kickoff", value: d.kickoff },
     { label: "Submissions close", value: d.submissionsClose },
-    { label: "Winners announced", value: d.winnersAnnounced },
+    { label: "Winners announced", value: winnersText() },
   ];
   return (
     <div className="dates">
       {items.map((i) => (
         <div key={i.label}>
           <div className="label">{i.label}</div>
-          <div className="value">{formatDate(i.value)}</div>
+          <div className="value">{typeof i.value === "string" ? i.value : formatDate(i.value)}</div>
         </div>
       ))}
     </div>
