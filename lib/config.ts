@@ -11,7 +11,7 @@ export const EVENT = {
     "Every participant builds an agentic AI application, ideally a multi-agent workflow, and ships it live for leadership to evaluate.",
   prizes: "Top submissions will receive exciting prizes.",
   judges: "Upper management",
-  expectedParticipants: "~100",
+  expectedParticipants: "~50",
 };
 
 // Event dates in Pakistan time (UTC+5). Empty means "TBD".
