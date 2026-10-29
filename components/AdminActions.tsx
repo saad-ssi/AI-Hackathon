@@ -2,10 +2,10 @@
 
 import { useRouter } from "next/navigation";
 
-export function LogoutButton() {
+export function LogoutButton({ role }: { role: "admin" | "judge" }) {
   const router = useRouter();
   async function logout() {
-    await fetch("/api/admin/logout", { method: "POST" });
+    await fetch("/api/admin/logout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ role }) });
     router.refresh();
   }
   return <button className="btn dark" onClick={logout}>Sign out</button>;

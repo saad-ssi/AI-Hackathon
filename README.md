@@ -2,7 +2,7 @@
 
 Public site for SSI's Agent-A-Thon 2026: event info, use cases, rubric, the Vercel guide, registration and submission.
 
-The public pages (`app/(site)/`) use the marketing team's retro arcade theme (`app/arcade.css`, `components/arcade/`), including its easter eggs: sound and CRT toggles, a score, 10 hidden coins across the pages, the Konami code, typing "agent" or "ship", and a game-over 404 page. `/admin` keeps the plain SSI look (`app/admin/layout.tsx`).
+The public pages (`app/(site)/`) use the marketing team's retro arcade theme (`app/arcade.css`, `components/arcade/`), including its easter eggs: sound and CRT toggles, a score, 10 hidden coins across the pages, the Konami code, typing "agent" or "ship", and a game-over 404 page. `/admin` and `/judge` keep the plain SSI look, with no links back to the participant site (`components/StaffShell.tsx`).
 Registrations and submissions are stored in a Neon Postgres database, which lives separately from the website itself.
 
 | Page | Who | Purpose |
@@ -13,7 +13,8 @@ Registrations and submissions are stored in a Neon Postgres database, which live
 | `/guide` | Public | Vercel quickstart (from `content/quickstart.md`) |
 | `/register` | Public | Registration form (company emails only) |
 | `/submit` | Public | Submission form; resubmits allowed until the deadline, every version kept |
-| `/admin` | Password | Admins: registrations, submissions, results and CSV downloads. Judges: score each entry |
+| `/admin` | Admin email + password | Registrations, submissions, results and CSV downloads, with the scoring rubric |
+| `/judge` | Judge email + password | Judges score each entry, with the scoring rubric |
 
 ## Set it up (about 20 minutes)
 
@@ -36,7 +37,7 @@ Vercel project → **Settings → Environment Variables** (see `.env.example`):
 
 | Name | Value |
 | --- | --- |
-| `ADMIN_PASSWORD` | A long password for the admin view of `/admin` |
+| `ADMIN_PASSWORD` | A long password for `/admin` |
 | `ADMINS` | Who may use the admin view, as `email=Name` entries separated by commas, e.g. `sjoiya@ssidecisions.com=Saad, gali@ssidecisions.com=Gali` |
 | `JUDGE_PASSWORD` | A different password you give the judges |
 | `JUDGES` | Who may judge, as `email=Name` entries separated by commas, e.g. `jane@ssidecisions.com=Jane Smith, gali@ssidecisions.com=Gali` |
@@ -75,7 +76,7 @@ Registrations and submissions each send a confirmation email, with a copy to the
 3. Delete the test rows afterwards (Neon console → **SQL Editor**): `TRUNCATE scores, submission_versions, submissions, registrations RESTART IDENTITY;`
 
 ## Judging
-Judges open `/admin` and sign in with **their email** (it must be listed in `JUDGES`) and the **judge password**. They see every submission with links to the live app and repo. They score each of the five criteria from 1 to 10 (all equal) with an optional comment, and can update their scores any time. Judges see only their own scores. Scores are stored by judge email; the names shown come from `JUDGES`, and removing an email from `JUDGES` locks that judge out.
+Judges open `/judge` (not `/admin`) and sign in with **their email** (it must be listed in `JUDGES`) and the **judge password**. They see every submission with links to the live app and repo. They score each of the five criteria from 1 to 10 (all equal) with an optional comment, and can update their scores any time. Judges see only their own scores. Scores are stored by judge email; the names shown come from `JUDGES`, and removing an email from `JUDGES` locks that judge out.
 Admins sign in with **their email** (it must be listed in `ADMINS`) and the **admin password**; removing an email from `ADMINS` locks that admin out. They see a **Results** table: each entry's average total across judges (out of 50), the number of judges who scored it, per-criterion averages and a ranking, plus a scores CSV.
 
 ## Where the data lives, and keeping copies

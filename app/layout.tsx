@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { EVENT } from "@/lib/config";
 import "./globals.css";
-// Arcade theme for the public pages; every rule is scoped to .arcade, so /admin is unaffected
+// Arcade theme for the public pages; every rule is scoped to .arcade, so /admin and /judge are unaffected
 import "./arcade.css";
 
 export const metadata: Metadata = {
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: `${EVENT.name}: register, read the rules and use cases, and submit your agentic AI product.`,
 };
 
-// Public pages use the arcade theme (app/(site)/layout.tsx); /admin keeps the plain SSI look (app/admin/layout.tsx).
+// Public pages use the arcade theme (app/(site)/layout.tsx); /admin and /judge keep the plain SSI look (components/StaffShell.tsx).
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">

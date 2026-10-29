@@ -1,13 +1,13 @@
 import AdminActions, { LogoutButton } from "@/components/AdminActions";
 import AdminLogin from "@/components/AdminLogin";
-import ScoreForm from "@/components/ScoreForm";
-import { adminConfigured, getAdmin, getJudge, judgeConfigured, judgeList } from "@/lib/auth";
-import { CRITERIA, formatDate, getDates, outsideDates, SCORE_MAX, SCORE_MIN } from "@/lib/config";
+import StaffRubric from "@/components/StaffRubric";
+import { adminConfigured, getAdmin, judgeList } from "@/lib/auth";
+import { CRITERIA, formatDate, getDates, outsideDates, SCORE_MAX } from "@/lib/config";
 import { ensureSchema, sql, type Registration, type Score, type Submission } from "@/lib/db";
 import { useCaseTitle } from "@/lib/validate";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Admin & judging | Agent-A-Thon 2026", robots: { index: false } };
+export const metadata = { title: "Admin | Agent-A-Thon 2026", robots: { index: false } };
 
 type SubRow = Submission & { name: string; department: string };
 
@@ -20,22 +20,22 @@ function OutsideDates() {
 }
 
 const MAX_TOTAL = CRITERIA.length * SCORE_MAX;
-const criteria = CRITERIA.map((c) => ({ key: c.key, label: c.label }));
 
+// Admins sign in here (email on the ADMINS list + the admin password). Judges score on /judge.
 export default async function Admin() {
-  const [admin, judge] = await Promise.all([getAdmin(), getJudge()]);
+  const admin = await getAdmin();
 
-  if (!admin && !judge) {
+  if (!admin) {
     return (
       <section className="section">
         <div className="wrap" style={{ maxWidth: 520 }}>
-          <h1>Admin &amp; judging</h1>
+          <h1>Admin</h1>
           {!adminConfigured() && (
             <div className="alert err">
               No admins are set up yet. Add ADMIN_PASSWORD and an ADMINS list in Vercel&apos;s Environment Variables, then redeploy.
             </div>
           )}
-          {(adminConfigured() || judgeConfigured()) && <AdminLogin />}
+          {adminConfigured() && <AdminLogin role="admin" />}
         </div>
       </section>
     );
@@ -54,16 +54,12 @@ export default async function Admin() {
       FROM submissions s JOIN registrations r ON r.email = s.email
       ORDER BY s.updated_at DESC`) as SubRow[];
     scores = (await q`SELECT * FROM scores`) as Score[];
-    if (admin) regs = (await q`SELECT * FROM registrations ORDER BY created_at DESC`) as Registration[];
+    regs = (await q`SELECT * FROM registrations ORDER BY created_at DESC`) as Registration[];
   } catch (err) {
     dbError = err instanceof Error ? err.message : String(err);
   }
 
-  // ---------- Judge view: score every entry ----------
-  const mine = new Map(scores.filter((s) => s.judge === judge?.email).map((s) => [s.submission_email, s]));
-  const toScore = [...subs].sort((a, b) => Number(mine.has(a.email)) - Number(mine.has(b.email))); // unscored first
-
-  // ---------- Admin view: results across judges ----------
+  // Results across judges
   // Judge columns: everyone listed in JUDGES (in that order), plus anyone who scored but has since been removed
   const judges = judgeList();
   const judgeCols = [
@@ -94,53 +90,15 @@ export default async function Admin() {
     <section className="section">
       <div className="wrap">
         <div className="admin-head">
-          <h1>Admin &amp; judging</h1>
+          <h1>Admin</h1>
           <div className="btn-row" style={{ marginTop: 0 }}>
-            <span className="muted small">
-              Signed in as {[admin && `admin: ${admin.name} (${admin.email})`, judge && `judge: ${judge.name} (${judge.email})`].filter(Boolean).join(" · ")}
-            </span>
-            <LogoutButton />
+            <span className="muted small">Signed in as {admin.name} ({admin.email})</span>
+            <LogoutButton role="admin" />
           </div>
         </div>
         {dbError && <div className="alert err">Database error: {dbError}</div>}
 
-        {judge && (
-          <>
-            <h2>Score the entries</h2>
-            <p className="muted">
-              Open each live app, try it, then score every criterion from {SCORE_MIN} (weak) to {SCORE_MAX} (outstanding). All
-              criteria count equally. You can update your scores any time; other judges can&apos;t see them.
-            </p>
-            <p><strong>You&apos;ve scored {mine.size} of {subs.length} entries.</strong></p>
-            {subs.length === 0 && <div className="closed">No submissions yet.</div>}
-            <div className="grid">
-              {toScore.map((s) => {
-                const m = mine.get(s.email);
-                return (
-                  <article key={s.email} className="card white entry-card">
-                    <div className="entry-head">
-                      <div>
-                        <h3>{s.project_name} {m && <span className="pill">Scored {m.total}/{MAX_TOTAL}</span>}</h3>
-                        <p className="muted small">{s.name} · {s.department} · {useCaseTitle(s.use_case)}</p>
-                      </div>
-                      <div className="btn-row" style={{ marginTop: 0 }}>
-                        <a className="btn" href={s.live_url} target="_blank" rel="noreferrer">Open live app ↗</a>
-                        <a className="btn dark" href={s.repo_url} target="_blank" rel="noreferrer">GitHub ↗</a>
-                      </div>
-                    </div>
-                    <p className="entry-summary">{s.pitch}</p>
-                    <ScoreForm email={s.email} criteria={criteria} min={SCORE_MIN} max={SCORE_MAX}
-                      initial={m?.scores ?? null} initialComment={m?.comment ?? ""} />
-                  </article>
-                );
-              })}
-            </div>
-          </>
-        )}
-
-        {admin && (
-          <>
-            {judge && <h2 style={{ marginTop: 48 }}>Event overview</h2>}
+        <>
             <div className="grid cols-4" style={{ marginBottom: 24 }}>
               <div className="tile red"><div className="big">{regs.length}</div><div className="small">Registrations</div></div>
               <div className="tile dark"><div className="big">{subs.length}</div><div className="small">Submissions</div></div>
@@ -148,6 +106,10 @@ export default async function Admin() {
               <div className="tile dark"><div className="big">{scores.length}</div><div className="small">Scores saved</div></div>
             </div>
             <AdminActions />
+
+            <p className="muted small" style={{ marginTop: 12 }}>
+              Judges score entries on their own page, <code>/judge</code>, with the judge password.
+            </p>
 
             <h2 style={{ marginTop: 40 }}>Results</h2>
             <p className="muted small">
@@ -159,6 +121,7 @@ export default async function Admin() {
                 ? "none listed yet. Add them to the JUDGES setting in Vercel."
                 : judgeProgress.map((j) => `${j.name} (${j.scored}/${subs.length} scored)`).join(" · ")}
             </p>
+            <StaffRubric folded />
             <div className="table-wrap">
               <table>
                 <thead>
@@ -276,8 +239,7 @@ export default async function Admin() {
                 </tbody>
               </table>
             </div>
-          </>
-        )}
+        </>
       </div>
     </section>
   );
