@@ -9,7 +9,7 @@ export const EVENT = {
     "Promote AI-driven development across SSI by building real agentic AI products.",
   objectiveDetail:
     "Every participant builds an agentic AI application, ideally a multi-agent workflow, and ships it live for leadership to evaluate.",
-  prizes: "Top submissions will receive exciting prizes.",
+  prizes: "Top submissions will receive an Apple iPad.",
   judges: "Upper management",
   expectedParticipants: "~50",
 };
@@ -121,7 +121,7 @@ export const STEPS = [
   { title: "Deploy", text: "Push to GitHub, deploy on Vercel." },
   { title: "Submit", text: "Repo URL, live URL and a short project summary, here." },
   { title: "Evaluation", text: "Upper management scores each entry." },
-  { title: "Winners", text: "Top submissions receive exciting prizes." },
+  { title: "Winners", text: "Top submissions receive an Apple iPad." },
 ];
 
 export const MUST_HAVES = [
