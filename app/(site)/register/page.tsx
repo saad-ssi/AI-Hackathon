@@ -1,10 +1,11 @@
 import Link from "next/link";
+import Coin from "@/components/arcade/Coin";
 import KeyDates from "@/components/KeyDates";
 import RegisterForm from "@/components/RegisterForm";
 import { allowedDomains, formatDate, getDates, MUST_HAVES, registrationNotYetOpen, registrationOpen } from "@/lib/config";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Register | AI Hackathon 2026" };
+export const metadata = { title: "Register | Agent-A-Thon 2026" };
 
 export default function Register() {
   const open = registrationOpen();
@@ -52,6 +53,7 @@ export default function Register() {
           </aside>
         </div>
       </div>
+      <Coin id="register" style={{ left: "2%", top: "70%" }} />
     </section>
   );
 }

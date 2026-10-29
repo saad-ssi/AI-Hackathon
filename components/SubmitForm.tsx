@@ -36,6 +36,7 @@ export default function SubmitForm({ useCases }: { useCases: Option[] }) {
       setVersion(data.version ?? 1);
       setEmailed(Boolean(data.emailed));
       setStatus("done");
+      dispatchEvent(new CustomEvent("arcade:levelup", { detail: "ENTRY SUBMITTED. GAME ON!" }));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Submission failed.");
       setStatus("idle");

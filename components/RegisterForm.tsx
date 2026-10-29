@@ -31,6 +31,7 @@ export default function RegisterForm({ domain }: { domain: string }) {
       setUpdated(Boolean(data.updated));
       setEmailed(Boolean(data.emailed));
       setStatus("done");
+      dispatchEvent(new CustomEvent("arcade:levelup", { detail: data.updated ? "REGISTRATION UPDATED. STILL IN THE GAME!" : "LEVEL UP! YOU'RE REGISTERED." }));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registration failed.");
       setStatus("idle");

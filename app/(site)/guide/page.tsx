@@ -2,8 +2,9 @@ import { readFile } from "fs/promises";
 import path from "path";
 import { marked } from "marked";
 import GuideEnhancer from "@/components/GuideEnhancer";
+import Coin from "@/components/arcade/Coin";
 
-export const metadata = { title: "Vercel guide | AI Hackathon 2026" };
+export const metadata = { title: "Vercel guide | Agent-A-Thon 2026" };
 
 // The guide's words live in content/quickstart.md; this page only arranges them into parts.
 type Part = { id: string; title: string; subtitle: string; match: string[]; folded: string[] };
@@ -154,6 +155,7 @@ export default async function Guide() {
         </div>
       </div>
       <GuideEnhancer />
+      <Coin id="guide" style={{ right: "3%", top: "60%" }} />
     </section>
   );
 }

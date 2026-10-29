@@ -1,6 +1,8 @@
-# AI Hackathon 2026 — Portal
+# Agent-A-Thon 2026 — Portal
 
-Public site for the SSI AI Hackathon: event info, use cases, rubric, the Vercel guide, registration and submission.
+Public site for SSI's Agent-A-Thon 2026: event info, use cases, rubric, the Vercel guide, registration and submission.
+
+The public pages (`app/(site)/`) use the marketing team's retro arcade theme (`app/arcade.css`, `components/arcade/`), including its easter eggs: sound and CRT toggles, a score, 10 hidden coins across the pages, the Konami code, typing "agent" or "ship", and a game-over 404 page. `/admin` keeps the plain SSI look (`app/admin/layout.tsx`).
 Registrations and submissions are stored in a Neon Postgres database, which lives separately from the website itself.
 
 | Page | Who | Purpose |

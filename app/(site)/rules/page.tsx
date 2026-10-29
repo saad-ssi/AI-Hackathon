@@ -1,8 +1,9 @@
 import Link from "next/link";
+import Coin from "@/components/arcade/Coin";
 import Rubric from "@/components/Rubric";
 import { EVENT, RULES, TOOLS } from "@/lib/config";
 
-export const metadata = { title: "Rules & rubric | AI Hackathon 2026" };
+export const metadata = { title: "Rules & rubric | Agent-A-Thon 2026" };
 
 export default function Rules() {
   return (
@@ -34,6 +35,7 @@ export default function Rules() {
             </div>
           </div>
         </div>
+        <Coin id="rubric" style={{ left: "2%", bottom: "10%" }} />
       </section>
 
       <section className="section">

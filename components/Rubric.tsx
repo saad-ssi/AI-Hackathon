@@ -4,7 +4,14 @@ import { CRITERIA } from "@/lib/config";
 export default function Rubric() {
   return (
     <ol className="criteria">
-      {CRITERIA.map((c) => <li key={c.key}>{c.label}</li>)}
+      {CRITERIA.map((c) => (
+        <li key={c.key}>
+          <span>
+            {c.label}
+            <small className="criteria-hint">{c.hint}</small>
+          </span>
+        </li>
+      ))}
     </ol>
   );
 }

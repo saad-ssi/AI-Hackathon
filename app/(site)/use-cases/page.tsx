@@ -1,7 +1,8 @@
 import Link from "next/link";
+import Coin from "@/components/arcade/Coin";
 import { MUST_HAVES, OWN_IDEA, USE_CASES, USE_CASES_NOTE } from "@/lib/config";
 
-export const metadata = { title: "Use cases | AI Hackathon 2026" };
+export const metadata = { title: "Use cases | Agent-A-Thon 2026" };
 
 export default function UseCases() {
   return (
@@ -13,6 +14,7 @@ export default function UseCases() {
             Build an agentic AI solution, ideally a multi-agent workflow. Bring your own idea, or start from one of the samples below. Every entry is evaluated on the same rubric.
           </p>
         </div>
+        <Coin id="use-cases" style={{ right: "6%", top: "30%" }} />
       </section>
 
       <section className="section alt">

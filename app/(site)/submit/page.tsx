@@ -1,11 +1,12 @@
 import Link from "next/link";
+import Coin from "@/components/arcade/Coin";
 import Rubric from "@/components/Rubric";
 import SubmitForm from "@/components/SubmitForm";
 import { formatDate, getDates, submissionsOpen } from "@/lib/config";
 import { USE_CASE_OPTIONS } from "@/lib/validate";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Submit | AI Hackathon 2026" };
+export const metadata = { title: "Submit | Agent-A-Thon 2026" };
 
 export default function Submit() {
   const open = submissionsOpen();
@@ -46,6 +47,7 @@ export default function Submit() {
           </aside>
         </div>
       </div>
+      <Coin id="submit" style={{ right: "2%", top: "45%" }} />
     </section>
   );
 }

@@ -2,9 +2,9 @@
 // dates are set below (Pakistan time); a matching environment variable on Vercel overrides any of them without a code change.
 
 export const EVENT = {
-  name: "AI Hackathon 2026",
+  name: "Agent-A-Thon 2026",
   org: "Strategic Systems International",
-  tagline: "Build agentic AI. Ship it live.",
+  tagline: "One weekend. One builder. One live agent.",
   objective:
     "Promote AI-driven development across SSI by building real agentic AI products.",
   objectiveDetail:
@@ -69,6 +69,20 @@ export function formatDate(d: Date | null): string {
     return d.toUTCString();
   }
 }
+
+/** Short Pakistan-time label for the level map, e.g. "Sun 15 Nov" or "Sun 15 Nov · 11:59 PM". */
+export function shortDate(d: Date | null, withTime = false): string {
+  if (!d) return "TBD";
+  const p = Object.fromEntries(
+    new Intl.DateTimeFormat("en-GB", {
+      weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit", hour12: true, timeZone: TIMEZONE,
+    }).formatToParts(d).map((x) => [x.type, x.value]),
+  );
+  const day = `${p.weekday} ${p.day} ${p.month}`;
+  return withTime ? `${day} · ${p.hour}:${p.minute} ${String(p.dayPeriod).toUpperCase()}` : day;
+}
+
+export const WINNERS_SHORT = "Mid-December";
 
 export function registrationNotYetOpen(now = new Date()) {
   const { registrationOpens } = getDates();
@@ -143,11 +157,17 @@ export const MUST_HAVES = [
   },
 ];
 
+// The agents shown on each quest card on the home page (colors are the arcade palette)
+export type Agent = { label: string; color: string };
+
 export type UseCase = {
   id: string;
   title: string;
   description: string;
+  team: Agent[];
 };
+
+const MINT = "#3DDC97", YEL = "#FFD23F", RED = "#E5333D", BLUE = "#5AA9FF";
 
 export const USE_CASES: UseCase[] = [
   {
@@ -155,18 +175,21 @@ export const USE_CASES: UseCase[] = [
     title: "Fact-Checking Agents",
     description:
       "Paste any article. An extractor agent splits it into factual claims, researcher agents check each claim against free public sources (e.g. Wikipedia, World Bank data), and a verifier agent weighs the evidence, sends researchers back when sources disagree, and returns a verdict with links for every claim.",
+    team: [{ label: "Extractor", color: BLUE }, { label: "Researcher", color: MINT }, { label: "Researcher", color: MINT }, { label: "Verifier", color: RED }],
   },
   {
     id: "prior-art-scout",
     title: "Prior-Art Scout",
     description:
       "Describe an invention or product idea. A search agent queries patents and research papers (PatentsView, OpenAlex, arXiv), an analyst agent ranks the closest matches and explains the overlap, and a critic agent challenges the ranking and sends the search back with sharper terms until the results stop improving.",
+    team: [{ label: "Search", color: BLUE }, { label: "Analyst", color: YEL }, { label: "Critic", color: RED }],
   },
   {
     id: "debate-partner",
     title: "Skeptical Debate Partner",
     description:
       "Pick any claim or decision. A 'for' agent and an 'against' agent each research and argue their side live, while a moderator agent keeps the debate on track, scores each round and writes the final summary. You can jump in to challenge either side.",
+    team: [{ label: "For", color: MINT }, { label: "Against", color: RED }, { label: "Moderator", color: YEL }],
   },
 ];
 
@@ -182,15 +205,16 @@ export const OWN_IDEA = {
   title: "Bring your own idea",
   description:
     "The recommended path. Build any agentic AI product you believe in, ideally with several agents that have distinct roles. It must meet the four must-haves and is evaluated on exactly the same rubric as the samples.",
+  team: [{ label: "Agent 1", color: YEL }, { label: "Agent 2", color: MINT }, { label: "Agent 3", color: BLUE }],
 };
 
 // Evaluation criteria, all counted equally. Keys are used to store judges' scores, so don't change them.
 export const CRITERIA = [
-  { key: "completeness", label: "Completeness (including multi-agent orchestration)" },
-  { key: "creativity", label: "Creativity & uniqueness" },
-  { key: "technical", label: "Technical execution" },
-  { key: "presentation", label: "Presentation & live product" },
-  { key: "business", label: "Business value of the proposed solution" },
+  { key: "completeness", label: "Completeness (including multi-agent orchestration)", hint: "Does it work end to end? Multi-agent orchestration counts here." },
+  { key: "creativity", label: "Creativity & uniqueness", hint: "Is the idea fresh and specific?" },
+  { key: "technical", label: "Technical execution", hint: "Clean build, sensible agents, API key kept out of the code." },
+  { key: "presentation", label: "Presentation & live product", hint: "Live on Vercel and easy to demo." },
+  { key: "business", label: "Business value of the proposed solution", hint: "Would someone at SSI or a client actually use it?" },
 ] as const;
 
 export const SCORE_MIN = 1;

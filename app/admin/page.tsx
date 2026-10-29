@@ -7,7 +7,7 @@ import { ensureSchema, sql, type Registration, type Score, type Submission } fro
 import { useCaseTitle } from "@/lib/validate";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Admin & judging | AI Hackathon 2026", robots: { index: false } };
+export const metadata = { title: "Admin & judging | Agent-A-Thon 2026", robots: { index: false } };
 
 type SubRow = Submission & { name: string; department: string };
 
