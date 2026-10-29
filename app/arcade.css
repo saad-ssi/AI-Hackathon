@@ -58,6 +58,8 @@ html:has(.arcade), body:has(.arcade) { background: #0E0F14; }
 /* HUD */
 .arcade .hud { position: sticky; top: 0; z-index: 50; background: rgba(14, 15, 20, 0.94); border-bottom: 2px solid var(--line); backdrop-filter: blur(6px); }
 .arcade .hud .wrap { display: flex; align-items: center; gap: 16px; min-height: 64px; }
+/* The header runs wider than the page content, so the brand and score sit further left, away from the links */
+.arcade .hud .wrap { max-width: 1440px; padding-left: max(24px, env(safe-area-inset-left, 0px)); padding-right: max(24px, env(safe-area-inset-right, 0px)); }
 .arcade .hud-brand { display: flex; align-items: center; gap: 8px; font-family: var(--px); font-size: 11px; color: var(--txt); text-decoration: none; white-space: nowrap; }
 .arcade .hud-brand:hover { color: var(--yel); }
 .arcade .hud-score { font-family: var(--px); font-size: 11px; white-space: nowrap; }
@@ -278,10 +280,13 @@ html:has(.arcade), body:has(.arcade) { background: #0E0F14; }
 .arcade-runner svg { width: 48px; height: 48px; display: block; }
 
 /* ---------- Smaller screens ---------- */
-@media (max-width: 900px) {
+/* The header's links move to their own row before they get crowded */
+@media (max-width: 1100px) {
   .arcade .hud .wrap { flex-wrap: wrap; row-gap: 8px; padding-top: 10px; padding-bottom: 10px; }
   .arcade .hud nav { order: 10; width: 100%; margin-left: 0; overflow-x: auto; gap: 18px; padding-bottom: 2px; }
   .arcade .hud .btn.sm { margin-left: auto; }
+}
+@media (max-width: 900px) {
   .arcade .glance { grid-template-columns: 1fr 1fr; }
   .arcade .prize, .arcade .duo { grid-template-columns: 1fr; }
   .arcade .quests { grid-template-columns: 1fr 1fr; }
