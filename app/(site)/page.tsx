@@ -1,22 +1,21 @@
 import Link from "next/link";
 import Coin from "@/components/arcade/Coin";
 import Countdown from "@/components/arcade/Countdown";
-import FlipRules from "@/components/arcade/FlipRules";
+import { AppleLogo, WithApple } from "@/components/arcade/Apple";
+import Bot from "@/components/arcade/Bot";
 import { HiScore } from "@/components/arcade/Hud";
 import IPad from "@/components/arcade/IPad";
 import LevelMap from "@/components/arcade/LevelMap";
 import Logo from "@/components/arcade/Logo";
-import QuestSelect from "@/components/arcade/QuestSelect";
 import KeyDates from "@/components/KeyDates";
 import {
-  AT_A_GLANCE, CRITERIA, EVENT, getDates, MUST_HAVES, OWN_IDEA, registrationOpen, RULES, shortDate, STEPS,
-  submissionsOpen, USE_CASES, WINNERS_SHORT,
+  AT_A_GLANCE, CRITERIA, EVENT, getDates, OWN_IDEA, registrationOpen, shortDate, STEPS, submissionsOpen, USE_CASES,
+  WINNERS_SHORT,
 } from "@/lib/config";
 
 export const dynamic = "force-dynamic";
 
 const iso = (d: Date | null) => (d ? d.toISOString() : null);
-const COLORS = ["#3DDC97", "#FFD23F", "#E5333D", "#5AA9FF"];
 
 export default function Home() {
   const dates = getDates();
@@ -39,12 +38,11 @@ export default function Home() {
     { at: iso(dates.kickoff), label: "KICKOFF" },
     { at: iso(dates.submissionsClose), label: "SUBMISSIONS CLOSE" },
   ];
+  // Short summaries here; each card opens the full description on the use cases page
   const quests = [
-    { tag: "▶ RECOMMENDED", name: OWN_IDEA.title, desc: OWN_IDEA.description, team: OWN_IDEA.team },
-    ...USE_CASES.map((u, i) => ({ tag: `QUEST 0${i + 1}`, name: u.title, desc: u.description, team: u.team })),
+    { id: OWN_IDEA.id, tag: "▶ RECOMMENDED", name: OWN_IDEA.title, summary: OWN_IDEA.summary, team: OWN_IDEA.team },
+    ...USE_CASES.map((u, i) => ({ id: u.id, tag: `QUEST 0${i + 1}`, name: u.title, summary: u.summary, team: u.team })),
   ];
-  // The must-haves already cover data, so the rules list skips its own data rule
-  const rules = [...MUST_HAVES, ...RULES.filter((r) => !/data/i.test(r.title))].map((r, i) => ({ title: r.title, text: r.text, color: COLORS[i % 3] }));
 
   return (
     <>
@@ -57,7 +55,7 @@ export default function Home() {
           <Logo />
           <p className="sub">
             Build and deploy a <b>live agentic AI app</b>, ideally a multi-agent workflow, in one weekend. Leadership scores it.{" "}
-            <b style={{ color: "var(--yel)" }}>{EVENT.prizes}</b>
+            <b style={{ color: "var(--yel)" }}><WithApple text={EVENT.prizes} /></b>
           </p>
           <div className="cta">
             {regOpen && <Link className="btn" href="/register">▶ INSERT COIN · REGISTER</Link>}
@@ -106,7 +104,7 @@ export default function Home() {
             {STEPS.map((s) => (
               <li key={s.title}>
                 <b>{s.title.toUpperCase()}</b>
-                <span>{s.text}</span>
+                <span><WithApple text={s.text} /></span>
               </li>
             ))}
           </ol>
@@ -117,40 +115,49 @@ export default function Home() {
         <div className="wrap">
           <p className="eyebrow">CHARACTER SELECT</p>
           <h2>PICK YOUR QUEST</h2>
-          <p className="lede">
-            Every entry must be an agentic AI solution, ideally multi-agent, running live on Vercel. Bring your own idea or start from a sample.{" "}
-            <Link href="/use-cases">All use cases →</Link>
-          </p>
-          <QuestSelect quests={quests} />
+          <p className="lede">Every entry is an agentic AI solution, ideally multi-agent, running live on Vercel. Bring your own idea or start from a sample.</p>
+          <div className="quests">
+            {quests.map((q, i) => (
+              <Link key={q.id} href={`/use-cases#${q.id}`} className={`quest${i === 0 ? " featured" : ""}`}>
+                <span className="qtag">{q.tag}</span>
+                <h3>{q.name}</h3>
+                <p>{q.summary}</p>
+                <span className="mini-team" aria-hidden="true">
+                  {q.team.map((a, j) => <Bot key={j} color={a.color} size={22} />)}
+                </span>
+                <span className="more">READ MORE ▶</span>
+              </Link>
+            ))}
+          </div>
+          <div className="cta left">
+            <Link className="btn ghost" href="/use-cases">ALL USE CASES ▶</Link>
+          </div>
         </div>
         <Coin id="quests" style={{ right: "3%", bottom: "12%" }} />
       </section>
 
-      <section className="lvl" id="criteria">
-        <div className="wrap">
-          <p className="eyebrow">{CRITERIA.length} CRITERIA · SCORED BY LEADERSHIP</p>
-          <h2>HOW YOU&apos;RE SCORED</h2>
-          <p className="lede">{EVENT.judges} open each live entry and score it on these five criteria, all counted equally.</p>
-          <ol className="powerups">
-            {CRITERIA.map((c, i) => (
-              <li key={c.key}>
-                <span className="pu-n" style={{ color: COLORS[i % 4] }}>{i + 1}</span>
-                <div>
-                  <b>{c.label}</b>
-                  <span>{c.hint}</span>
-                </div>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
-      <section className="lvl" id="house-rules">
+      <section className="lvl" id="rules-scoring">
         <div className="wrap">
           <p className="eyebrow">FAIR · SAFE · REAL</p>
-          <h2>HOUSE RULES</h2>
-          <p className="lede">The must-haves and rules every entry follows. Tap a card to flip it.</p>
-          <FlipRules rules={rules} />
+          <h2>RULES &amp; SCORING</h2>
+          <div className="duo">
+            <div className="panel-card">
+              <h3>HOW YOU&apos;RE SCORED</h3>
+              <p>{EVENT.judges} open each live entry and score it on {CRITERIA.length} criteria, all counted equally:</p>
+              <ul className="chips">
+                {CRITERIA.map((c) => <li key={c.key}>{c.label.split(" (")[0]}</li>)}
+              </ul>
+              <Link className="btn sm" href="/rules">SEE THE RUBRIC ▶</Link>
+            </div>
+            <div className="panel-card">
+              <h3>HOUSE RULES</h3>
+              <p>
+                Build on your own, with public or made-up data only. Keep your API key out of the code, use safe agent settings,
+                and ship a working app live on Vercel before adding polish.
+              </p>
+              <Link className="btn sm" href="/rules">READ THE RULES ▶</Link>
+            </div>
+          </div>
         </div>
         <Coin id="rules" style={{ left: "2%", bottom: "8%" }} />
       </section>
@@ -163,9 +170,13 @@ export default function Home() {
             <h2>
               HIGH SCORE
               <br />
-              WINS AN <span>iPAD</span>
+              WINS AN{" "}
+              <span>
+                <AppleLogo />
+                iPAD
+              </span>
             </h2>
-            <p className="prize-text">{EVENT.prizes} Register with your SSI email, build over one weekend, ship it live.</p>
+            <p className="prize-text"><WithApple text={EVENT.prizes} /> Register with your SSI email, build over one weekend, ship it live.</p>
             <div className="cta left">
               {regOpen && <Link className="btn" href="/register">▶ REGISTER NOW</Link>}
               <Link className="btn ghost" href="/submit">SUBMIT YOUR BUILD</Link>

@@ -4,7 +4,7 @@
 export const EVENT = {
   name: "Agent-A-Thon 2026",
   org: "Strategic Systems International",
-  tagline: "One weekend. One builder. One live agent.",
+  tagline: "One weekend. One builder. One multi-agent system.",
   objective:
     "Promote AI-driven development across SSI by building real agentic AI products.",
   objectiveDetail:
@@ -163,6 +163,8 @@ export type Agent = { label: string; color: string };
 export type UseCase = {
   id: string;
   title: string;
+  /** One line for the home page; the full description is on the use cases page */
+  summary: string;
   description: string;
   team: Agent[];
 };
@@ -173,6 +175,7 @@ export const USE_CASES: UseCase[] = [
   {
     id: "fact-checker",
     title: "Fact-Checking Agents",
+    summary: "Paste an article. Agents pull out the claims, check each one against public sources and give a verdict.",
     description:
       "Paste any article. An extractor agent splits it into factual claims, researcher agents check each claim against free public sources (e.g. Wikipedia, World Bank data), and a verifier agent weighs the evidence, sends researchers back when sources disagree, and returns a verdict with links for every claim.",
     team: [{ label: "Extractor", color: BLUE }, { label: "Researcher", color: MINT }, { label: "Researcher", color: MINT }, { label: "Verifier", color: RED }],
@@ -180,6 +183,7 @@ export const USE_CASES: UseCase[] = [
   {
     id: "prior-art-scout",
     title: "Prior-Art Scout",
+    summary: "Describe an invention. Agents find similar patents and papers, compare them and challenge the results.",
     description:
       "Describe an invention or product idea. A search agent queries patents and research papers (PatentsView, OpenAlex, arXiv), an analyst agent ranks the closest matches and explains the overlap, and a critic agent challenges the ranking and sends the search back with sharper terms until the results stop improving.",
     team: [{ label: "Search", color: BLUE }, { label: "Analyst", color: YEL }, { label: "Critic", color: RED }],
@@ -187,6 +191,7 @@ export const USE_CASES: UseCase[] = [
   {
     id: "debate-partner",
     title: "Skeptical Debate Partner",
+    summary: "Pick a claim. One agent argues for it, one argues against it, and a moderator scores the debate.",
     description:
       "Pick any claim or decision. A 'for' agent and an 'against' agent each research and argue their side live, while a moderator agent keeps the debate on track, scores each round and writes the final summary. You can jump in to challenge either side.",
     team: [{ label: "For", color: MINT }, { label: "Against", color: RED }, { label: "Moderator", color: YEL }],
@@ -203,6 +208,7 @@ export const USE_CASES_NOTE = {
 export const OWN_IDEA = {
   id: "own-idea",
   title: "Bring your own idea",
+  summary: "Any agentic AI product you believe in, with your own team of agents. The recommended path.",
   description:
     "The recommended path. Build any agentic AI product you believe in, ideally with several agents that have distinct roles. It must meet the four must-haves and is evaluated on exactly the same rubric as the samples.",
   team: [{ label: "Agent 1", color: YEL }, { label: "Agent 2", color: MINT }, { label: "Agent 3", color: BLUE }],

@@ -52,7 +52,7 @@ export default function Logo() {
         className="aat-logo"
         viewBox="60 60 1160 630"
         role="img"
-        aria-label="SSI presents Agent-A-Thon. One weekend. One builder. One live agent. Click the bot."
+        aria-label="SSI presents Agent-A-Thon. One weekend. One builder. One multi-agent system. Click the bot."
       >
         <defs>
           <path id="aat-arc" d="M 90 492 Q 640 348 1190 492" />
@@ -89,7 +89,7 @@ export default function Logo() {
         </g>
         <rect className="wcover" x="60" y="300" width="1200" height="240" fill="#0E0F14" />
         <text x="640" y="602" textAnchor="middle" fill="#F2F2F2" style={{ fontFamily: "var(--sk)", fontSize: 26, letterSpacing: 2 }}>
-          ONE WEEKEND. ONE BUILDER. <tspan fill="#E5333D">ONE LIVE AGENT.</tspan>
+          ONE WEEKEND. ONE BUILDER. <tspan fill="#E5333D">ONE MULTI-AGENT SYSTEM.</tspan>
         </text>
         <rect className="tcover" x="60" y="570" width="1200" height="50" fill="#0E0F14" />
       </svg>

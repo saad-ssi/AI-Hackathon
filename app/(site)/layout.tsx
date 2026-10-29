@@ -30,7 +30,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
         <div className="wrap">
           <span>{EVENT.org.toUpperCase()} · {EVENT.name.toUpperCase()}</span>
           <span>
-            ONE WEEKEND. ONE BUILDER. <span style={{ color: "var(--red)" }}>ONE LIVE AGENT.</span>
+            ONE WEEKEND. ONE BUILDER. <span style={{ color: "var(--red)" }}>ONE MULTI-AGENT SYSTEM.</span>
           </span>
         </div>
       </footer>

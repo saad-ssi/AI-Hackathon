@@ -36,13 +36,13 @@ export default function UseCases() {
         <div className="wrap">
           <h2>Your idea, or a sample</h2>
           <div className="grid cols-2">
-            <div className="card red">
+            <div className="card red" id={OWN_IDEA.id}>
               <div className="badge white">+</div>
               <h3>{OWN_IDEA.title}</h3>
               <p>{OWN_IDEA.description}</p>
             </div>
             {USE_CASES.map((u, i) => (
-              <div className="card" key={u.id}>
+              <div className="card" key={u.id} id={u.id}>
                 <div className="badge">{i + 1}</div>
                 <h3>{u.title}</h3>
                 <p className="muted">{u.description}</p>

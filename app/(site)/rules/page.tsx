@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Coin from "@/components/arcade/Coin";
+import { WithApple } from "@/components/arcade/Apple";
 import Rubric from "@/components/Rubric";
 import { EVENT, RULES, TOOLS } from "@/lib/config";
 
@@ -30,7 +31,7 @@ export default function Rules() {
               </div>
               <div className="card red">
                 <div className="tag">Prizes</div>
-                <p>{EVENT.prizes}</p>
+                <p><WithApple text={EVENT.prizes} /></p>
               </div>
             </div>
           </div>
