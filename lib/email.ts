@@ -100,7 +100,7 @@ export async function sendRegistrationEmail(r: { email: string; name: string; de
         {
           heading: "Next steps",
           lines: [
-            "Watch your inbox for your personal LiteLLM API key.",
+            "Watch your inbox: the organizers will send you your personal LiteLLM API key.",
             `Set up GitHub and Vercel ahead of time with the guide: ${url}/guide`,
             `Pick your idea and read the must-haves: ${url}/use-cases`,
             `See how entries are scored: ${url}/rules`,

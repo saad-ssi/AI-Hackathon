@@ -124,7 +124,7 @@ export const AT_A_GLANCE = [
   { big: "Individual", small: "One person, one product" },
   { big: "1 weekend", small: "Fri 27 to Sun 29 November" },
   { big: "Claude + Cursor", small: "Build tools, already licensed org-wide" },
-  { big: "LiteLLM", small: "Personal API key for model access" },
+  { big: "LiteLLM", small: "Personal API key for model access, provided by the organizers" },
   { big: "Vercel", small: "Free deployment with a live public URL" },
 ];
 
@@ -141,7 +141,7 @@ export const STEPS = [
 export const MUST_HAVES = [
   {
     title: "Build an agentic AI solution",
-    text: "Your app uses AI agents that plan, call tools or APIs and act on the results, live through your LiteLLM key, not a single prompt. Multi-agent workflows (agents with distinct roles handing work to each other) are strongly encouraged and score higher.",
+    text: "Your app uses AI agents that plan, call tools or APIs and act on the results, live through the LiteLLM key the organizers give you, not a single prompt. Multi-agent workflows (agents with distinct roles handing work to each other) are strongly encouraged and score higher.",
   },
   {
     title: "Use public or made-up data only",
@@ -237,7 +237,7 @@ export const RULES = [
   },
   {
     title: "Protect your API key",
-    text: "Store the LiteLLM key as a Vercel environment variable. Never commit it to the repo.",
+    text: "Store the LiteLLM key the organizers give you as a Vercel environment variable. Never commit it to the repo.",
   },
   {
     title: "Safe AI-agent settings",
@@ -259,7 +259,7 @@ export const TOOLS = [
     title: "Power",
     sub: "LiteLLM API key",
     items: [
-      "Personal key issued to each participant",
+      "Personal key provided by the organizers to each participant",
       "Gives your agents real model calls at runtime",
       "Spend cap per key; usage tracked centrally",
     ],

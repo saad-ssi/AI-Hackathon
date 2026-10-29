@@ -17,7 +17,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
           <HudScore />
           <nav aria-label="Main">
             <Link href="/use-cases">USE CASES</Link>
-            <Link href="/rules">RULES</Link>
+            <Link href="/rules">RULES &amp; RUBRIC</Link>
             <Link href="/guide">GUIDE</Link>
             <Link href="/register">REGISTER</Link>
           </nav>

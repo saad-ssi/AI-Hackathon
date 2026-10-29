@@ -47,7 +47,7 @@ export default function RegisterForm({ domain }: { domain: string }) {
         </div>
         <p>Next steps:</p>
         <ol>
-          <li>Watch your inbox for your LiteLLM API key and the kickoff details.</li>
+          <li>Watch your inbox: the organizers will send you your personal LiteLLM API key and the kickoff details.</li>
           <li>Set up GitHub and Vercel ahead of time with the <Link href="/guide">guide</Link>.</li>
           <li>When your app is live, <Link href="/submit">submit it here</Link> using the same email.</li>
         </ol>

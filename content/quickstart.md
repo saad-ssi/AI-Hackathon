@@ -25,7 +25,7 @@ You only need these nine terms. Come back to this table whenever a step uses one
 | Deployment | One published version of your app. Every time you push code, Vercel builds a new deployment automatically. |
 | API route | A small piece of server code inside your app (a file named `route.ts`). It runs on Vercel's servers, never in the user's browser, so it can safely hold secrets. |
 | Environment variable | A named secret setting, such as your API key, stored outside your code. Locally it lives in `.env.local`; on Vercel you type it into the project settings. |
-| LiteLLM | SSI's gateway to the AI models. Your personal key lets your app call the models through it, with a spend cap per key. |
+| LiteLLM | SSI's gateway to the AI models. Your personal key, provided by the organizers, lets your app call the models through it, with a spend cap per key. |
 | `openai` library | A code library that speaks the industry-standard request format LiteLLM uses. **Despite the name, it talks only to SSI's LiteLLM gateway**, which sends your request to the model SSI enabled (e.g. Claude). No OpenAI account or key is involved. |
 
 ## Before you start
@@ -40,7 +40,7 @@ You need a laptop with internet access, admin rights to install two programs, an
 | Value | What it is | Example of its shape |
 | --- | --- | --- |
 | `LITELLM_BASE_URL` | The address of SSI's LiteLLM gateway | `https://<gateway address from organizers>/v1` |
-| `LITELLM_API_KEY` | Your personal key. Treat it like a password. | `sk-` followed by a long string |
+| `LITELLM_API_KEY` | Your personal key, provided by the organizers. Treat it like a password. | `sk-` followed by a long string |
 | `LITELLM_MODEL` | The name of the model you're allowed to use | A short name such as `claude-sonnet` |
 
 > [!WARNING] Copy the three values exactly as sent, including any `/v1` at the end of the address. Don't share your key with anyone, including teammates; every participant gets their own.
@@ -74,7 +74,7 @@ git config --global user.email "you@example.com"
 
 ## Step 2: Check your LiteLLM key works
 
-Ask the gateway for its list of models. If you get a list back, your key and address are correct.
+Use the key and gateway address the organizers sent you. Ask the gateway for its list of models; if you get a list back, your key and address are correct.
 
 In your terminal, run this, replacing the two placeholders with your values. Put your base URL first, then `/models`.
 
