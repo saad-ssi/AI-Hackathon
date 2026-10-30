@@ -1,4 +1,4 @@
-import { submissionsOpen } from "@/lib/config";
+import { submissionsNotYetOpen, submissionsOpen } from "@/lib/config";
 import { ensureSchema, sql, type SubmissionVersion } from "@/lib/db";
 import { sendSubmissionEmail } from "@/lib/email";
 import { clean, liveUrlError, normalizeEmail, repoUrlError, USE_CASE_OPTIONS } from "@/lib/validate";
@@ -9,7 +9,8 @@ export async function POST(req: Request) {
     if (clean(body.website)) return Response.json({ ok: true, version: 1 });
 
     if (!submissionsOpen()) {
-      return Response.json({ error: "Submissions are closed." }, { status: 403 });
+      const error = submissionsNotYetOpen() ? "Submissions open at kickoff, when the build weekend starts." : "Submissions are closed.";
+      return Response.json({ error }, { status: 403 });
     }
 
     const email = normalizeEmail(body.email);

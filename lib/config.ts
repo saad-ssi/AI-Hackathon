@@ -95,10 +95,17 @@ export function registrationOpen(now = new Date()) {
   return !registrationNotYetOpen(now) && (!registrationCloses || now < registrationCloses);
 }
 
+/** With ENFORCE_DATES on, submissions open at kickoff (the build weekend starts). */
+export function submissionsNotYetOpen(now = new Date()) {
+  if (!ENFORCE_DATES) return false;
+  const { kickoff } = getDates();
+  return Boolean(kickoff && now < kickoff);
+}
+
 export function submissionsOpen(now = new Date()) {
   if (!ENFORCE_DATES) return true;
   const { submissionsClose } = getDates();
-  return !submissionsClose || now < submissionsClose;
+  return !submissionsNotYetOpen(now) && (!submissionsClose || now < submissionsClose);
 }
 
 export function winnersText(): string {

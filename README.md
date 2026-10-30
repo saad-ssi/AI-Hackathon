@@ -50,7 +50,7 @@ Vercel project → **Settings → Environment Variables** (see `.env.example`):
 
 The event dates are set in `lib/config.ts` (`DATES`), in Pakistan time, and every date on the site and in emails shows in Pakistan time (PKT). A date variable on Vercel overrides the one in the code; a date left empty in both shows as **TBD**. Winners show as "Mid-December 2026 (approx.)" until `WINNERS_ANNOUNCED` has a date.
 
-**Forms stay open for now.** The dates are shown everywhere, but registration and submission work at any time so the portal can be tested; on `/admin`, any registration or submission made outside its dates is marked **Outside dates** for manual review. To close the forms automatically on their dates, add `ENFORCE_DATES=true` on Vercel and redeploy.
+**Forms stay open for now.** The dates are shown everywhere, but registration and submission work at any time so the portal can be tested; on `/admin`, any registration or submission made outside its dates is marked **Outside dates** for manual review. To make the forms follow the dates, add `ENFORCE_DATES=true` on Vercel and redeploy: registration is then open from `REGISTRATION_OPENS` to `REGISTRATION_CLOSES`, and submission only during the build weekend, from `KICKOFF_AT` to `SUBMISSIONS_CLOSE`.
 Then **Deployments → ⋯ → Redeploy** so the new values take effect.
 
 ### 5. Confirmation emails (Amazon SES, optional)
