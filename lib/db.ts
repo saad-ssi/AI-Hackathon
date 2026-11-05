@@ -87,6 +87,16 @@ export function ensureSchema(): Promise<void> {
         updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
         PRIMARY KEY (submission_email, judge)
       )`;
+      // New registrations wait here until the person enters the code we emailed them
+      await q`CREATE TABLE IF NOT EXISTS pending_registrations (
+        email TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        department TEXT NOT NULL,
+        code_hash TEXT NOT NULL,
+        attempts INTEGER NOT NULL DEFAULT 0,
+        expires_at TIMESTAMPTZ NOT NULL,
+        sent_at TIMESTAMPTZ NOT NULL DEFAULT now()
+      )`;
     })().catch((err) => {
       schemaReady = null;
       throw err;

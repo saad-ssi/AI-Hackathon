@@ -53,8 +53,8 @@ The event dates are set in `lib/config.ts` (`DATES`), in Pakistan time, and ever
 **Forms stay open for now.** The dates are shown everywhere, but registration and submission work at any time so the portal can be tested; on `/admin`, any registration or submission made outside its dates is marked **Outside dates** for manual review. To make the forms follow the dates, add `ENFORCE_DATES=true` on Vercel and redeploy: registration is then open from `REGISTRATION_OPENS` to `REGISTRATION_CLOSES`, and submission only during the build weekend, from `KICKOFF_AT` to `SUBMISSIONS_CLOSE`.
 Then **Deployments → ⋯ → Redeploy** so the new values take effect.
 
-### 5. Confirmation emails (Amazon SES, optional)
-Registrations and submissions each send a confirmation email, with a copy to the organizers. Emails stay off until these settings exist; a failed email never blocks a registration or submission.
+### 5. Emails (Amazon SES, required for registration)
+Registration is confirmed by email: the portal sends a 6-digit code (valid 15 minutes, 5 tries, not copied to the organizers), and the person is registered only after entering it, so only real, reachable addresses can register. Codes waiting to be confirmed sit in the `pending_registrations` table. Registrations and submissions then each send a confirmation email, with a copy to the organizers. **Without these settings nobody can register**, because the code can't be sent; a failed confirmation email never blocks a registration or submission.
 
 1. **Sender:** in the AWS console, open **Amazon SES → Identities → Create identity**. Best: verify the whole `ssidecisions.com` **domain** (IT adds the DKIM DNS records SES shows), so emails pass spam checks and can reach any colleague even while the account is in the SES sandbox. Quicker: verify a single address such as `hackathon@ssidecisions.com`, then request **production access** (SES → Account dashboard) so it can email unverified recipients.
 2. **Key:** in **IAM → Users → Create user**, attach a policy that allows only `ses:SendEmail`, then create an **access key** for that user.
@@ -73,7 +73,7 @@ Registrations and submissions each send a confirmation email, with a copy to the
 ### 6. Test before announcing
 1. Register with your own `@ssidecisions.com` email, then submit a test entry.
 2. Check both appear in `/admin`, that the CSV downloads open in Excel, and (if emails are set up) that both confirmation emails arrive.
-3. Delete the test rows afterwards (Neon console → **SQL Editor**): `TRUNCATE scores, submission_versions, submissions, registrations RESTART IDENTITY;`
+3. Delete the test rows afterwards (Neon console → **SQL Editor**): `TRUNCATE scores, submission_versions, submissions, registrations, pending_registrations RESTART IDENTITY;`
 
 ## Judging
 Judges open `/judge` (not `/admin`) and sign in with **their email** (it must be listed in `JUDGES`) and the **judge password**. They see every submission with links to the live app and repo. They score each of the five criteria from 1 to 10 (all equal) with an optional comment, and can update their scores any time. Judges see only their own scores. Scores are stored by judge email; the names shown come from `JUDGES`, and removing an email from `JUDGES` locks that judge out.

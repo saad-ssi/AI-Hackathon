@@ -47,7 +47,7 @@ ${sections.map((s) => `${s.heading ? `<p style="margin-bottom:4px"><strong>${esc
   return { text, html };
 }
 
-async function send(to: string, subject: string, body: { text: string; html: string }) {
+async function send(to: string, subject: string, body: { text: string; html: string }, { copyOrganizers = true } = {}) {
   if (!emailConfigured()) return false;
   try {
     const client = new SESv2Client({
@@ -55,7 +55,7 @@ async function send(to: string, subject: string, body: { text: string; html: str
       endpoint: process.env.SES_ENDPOINT || undefined, // only for local testing
       credentials: { accessKeyId: process.env.SES_ACCESS_KEY_ID!, secretAccessKey: process.env.SES_SECRET_ACCESS_KEY! },
     });
-    const bcc = [...new Set([...(process.env.EMAIL_BCC || "").split(","), ...ORGANIZER_COPIES].map((e) => e.trim().toLowerCase()).filter(Boolean))]
+    const bcc = !copyOrganizers ? [] : [...new Set([...(process.env.EMAIL_BCC || "").split(","), ...ORGANIZER_COPIES].map((e) => e.trim().toLowerCase()).filter(Boolean))]
       .filter((e) => e !== to.toLowerCase());
     await client.send(
       new SendEmailCommand({
@@ -74,6 +74,21 @@ async function send(to: string, subject: string, body: { text: string; html: str
     console.error("Email failed:", err);
     return false;
   }
+}
+
+/** The one-time code that confirms a new registration's email address (not copied to the organizers). */
+export async function sendVerificationCode(email: string, name: string, code: string, minutes: number) {
+  return send(
+    email,
+    `Your ${EVENT.name} code: ${code}`,
+    render(
+      `Hi ${name},`,
+      `Your code to finish registering for ${EVENT.name} is ${code}. Enter it on the registration page. It expires in ${minutes} minutes.`,
+      [],
+      `If you didn't try to register, you can ignore this email; nothing happens without the code. Questions? Please ${contactLine()}.`,
+    ),
+    { copyOrganizers: false },
+  );
 }
 
 export async function sendRegistrationEmail(r: { email: string; name: string; department: string }, updated: boolean) {
