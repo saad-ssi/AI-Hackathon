@@ -19,7 +19,7 @@ const DATES: Record<string, string> = {
   REGISTRATION_OPENS: "2026-11-02T00:00:00+05:00",
   REGISTRATION_CLOSES: "2026-11-18T23:59:00+05:00",
   KICKOFF_AT: "2026-11-27T00:00:00+05:00",
-  SUBMISSIONS_CLOSE: "2026-11-29T23:59:00+05:00",
+  SUBMISSIONS_CLOSE: "2026-11-30T14:00:00+05:00",
   WINNERS_ANNOUNCED: "",
 };
 // Shown while WINNERS_ANNOUNCED has no exact date
@@ -129,7 +129,7 @@ export function allowedDomains(): string[] {
 export const AT_A_GLANCE = [
   { big: "Agentic AI", small: "Multi-agent workflows strongly encouraged" },
   { big: "Individual", small: "One person, one product" },
-  { big: "1 weekend", small: "Fri 27 to Sun 29 November" },
+  { big: "1 weekend", small: "Fri 27 Nov to Mon 30 Nov, 2 PM" },
   { big: "Claude + Cursor", small: "Build tools, already licensed org-wide" },
   { big: "LiteLLM", small: "Personal API key for model access, provided by the organizers" },
   { big: "Vercel", small: "Free deployment with a live public URL" },

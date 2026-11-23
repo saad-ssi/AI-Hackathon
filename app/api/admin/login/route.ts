@@ -1,4 +1,4 @@
-import { ADMIN_COOKIE, adminToken, isAdminPassword, isJudgePassword, JUDGE_COOKIE, judgeToken } from "@/lib/auth";
+import { isRolePassword, roleCookie, roleToken, type StaffRole } from "@/lib/auth";
 import { normalizeEmail } from "@/lib/validate";
 import { cookies } from "next/headers";
 
@@ -10,26 +10,24 @@ const COOKIE = {
   maxAge: 60 * 60 * 24 * 7,
 };
 
-// Each role signs in on its own page: /admin with a listed admin's email + the admin password,
-// /judge with a listed judge's email + the judge password. The other role's password is not accepted.
+const NOT_LISTED: Record<StaffRole, string> = {
+  admin: "This email isn't on the admins list.",
+  architect: "This email isn't on the architects list. Contact the organizers.",
+  judge: "This email isn't on the judges list. Contact the organizers.",
+};
+
+// Each role signs in on its own page with a listed email + that role's password:
+// /admin (admin password), /architect (architect password) and /judge (judge password).
 export async function POST(req: Request) {
   const body = await req.json().catch(() => ({}));
-  const role = body.role === "judge" ? "judge" : "admin";
+  const role: StaffRole = body.role === "judge" || body.role === "architect" ? body.role : "admin";
   const password = typeof body.password === "string" ? body.password : "";
   const email = normalizeEmail(body.email);
-  const jar = await cookies();
 
-  if (role === "admin" && isAdminPassword(password)) {
-    const t = adminToken(password, email);
-    if (!t) return Response.json({ error: "This email isn't on the admins list." }, { status: 403 });
-    jar.set(ADMIN_COOKIE, t, COOKIE);
-    return Response.json({ ok: true, role });
-  }
-
-  if (role === "judge" && isJudgePassword(password)) {
-    const t = judgeToken(password, email);
-    if (!t) return Response.json({ error: "This email isn't on the judges list. Contact the organizers." }, { status: 403 });
-    jar.set(JUDGE_COOKIE, t, COOKIE);
+  if (isRolePassword(role, password)) {
+    const t = roleToken(role, password, email);
+    if (!t) return Response.json({ error: NOT_LISTED[role] }, { status: 403 });
+    (await cookies()).set(roleCookie(role), t, COOKIE);
     return Response.json({ ok: true, role });
   }
 

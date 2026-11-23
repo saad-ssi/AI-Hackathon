@@ -234,7 +234,70 @@ tr:last-child td { border-bottom: 0; }
 .score-actions { display: flex; align-items: center; gap: 16px; margin-top: 12px; flex-wrap: wrap; }
 .criteria-hint { display: block; font-weight: 400; font-size: 14px; color: var(--muted); }
 
-/* Staff pages (/admin, /judge) */
+/* Staff pages (/admin, /architect, /judge) */
 .staff-label { font-weight: 400; color: var(--muted); border-left: 1px solid var(--line); padding-left: 10px; }
 .staff-rubric { margin-bottom: 24px; }
 .staff-rubric .criteria { margin-top: 12px; }
+
+/* Two-stage judging (/architect, /judge, /admin) */
+.pill.grey { color: var(--muted); border-color: var(--line); background: var(--light); }
+.pill.green { color: var(--good); border-color: #b9dfc5; background: var(--good-bg); }
+.rubric-cards { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); margin: 12px 0 16px; }
+.rubric-card { background: var(--light); border-radius: var(--radius); padding: 14px 16px; font-size: 14px; }
+.rubric-card h4 { display: flex; align-items: center; gap: 10px; margin: 0 0 8px; font-size: 16px; }
+.rubric-card ul { margin: 4px 0 10px; padding-left: 18px; }
+.rubric-card li { margin-bottom: 2px; }
+.rubric-num { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; flex: none; background: var(--red); color: var(--white); font-size: 13px; font-weight: 700; border-radius: 2px; }
+.rubric-label { font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: var(--muted); margin-top: 6px; }
+.scale { display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); font-size: 13px; margin-top: 4px; }
+.scale-item { display: flex; flex-direction: column; padding: 8px 12px; border-left: 3px solid var(--line); background: var(--white); }
+.scale-item:nth-child(3) { border-left-color: var(--charcoal); }
+.scale-item:nth-child(4) { border-left-color: var(--red); }
+.scale-item strong { font-size: 14px; }
+.plain-fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+.score-form.is-disabled .plain-fieldset { opacity: 0.45; }
+.score-form.is-disabled select, .score-form.is-disabled textarea, .score-form.is-disabled button { cursor: not-allowed; }
+.waiting-note { margin-bottom: 10px; padding: 10px 14px; border-radius: var(--radius); background: var(--light); border: 1px dashed var(--line); color: var(--muted); font-weight: 700; font-size: 14px; }
+.entry-card.waiting .entry-summary { opacity: 0.8; }
+.decision-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+.decision { display: flex; align-items: center; gap: 8px; padding: 8px 14px; border: 1px solid var(--line); border-radius: var(--radius); font-weight: 700; cursor: pointer; }
+.decision input { accent-color: var(--red); width: 16px; height: 16px; }
+.decision.pass.on { border-color: var(--good); background: var(--good-bg); color: var(--good); }
+.decision.filter.on { border-color: var(--red); background: var(--bad-bg); color: var(--red-dark); }
+.reason-groups { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); }
+.reason-group { border: 1px solid var(--line); border-radius: var(--radius); padding: 8px 14px 4px; margin: 0; font-size: 14px; }
+.reason-group legend { font-weight: 700; padding: 0 6px; }
+
+/* Judging pages (Stage 2 /judge, Stage 3 /judge/stage-3) */
+.tile.light { background: var(--light); color: var(--ink); border: 1px solid var(--line); }
+.stage-eyebrow { margin: 0 0 4px; font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--red); }
+.stage-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 20px; border-bottom: 1px solid var(--line); }
+.stage-tab { display: flex; align-items: center; gap: 8px; padding: 10px 14px; margin-bottom: -1px; border: 1px solid transparent; border-radius: var(--radius) var(--radius) 0 0; color: var(--muted); text-decoration: none; font-size: 15px; }
+.stage-tab:hover { color: var(--ink); background: var(--light); }
+.stage-tab.on { color: var(--ink); background: var(--white); border-color: var(--line); border-bottom-color: var(--white); }
+.stage-tab-num { font-weight: 700; color: var(--red); }
+.stage-tab.on .stage-tab-name { font-weight: 700; }
+.stage-tab .pill { margin-left: 0; }
+.how-grid { display: grid; gap: 8px 32px; grid-template-columns: repeat(auto-fit, minmax(min(360px, 100%), 1fr)); }
+.how-grid h3 { margin: 0 0 10px; }
+.how-steps { margin: 0 0 12px; padding-left: 20px; font-size: 15px; }
+.how-steps li { margin-bottom: 6px; }
+.staff-rubric .how-grid .rubric-cards { margin-top: 0; }
+.how-grid + .scale { margin-top: 16px; }
+.stage-steps { margin: 0 0 16px; padding-left: 20px; font-size: 15px; }
+.stage-steps li { margin-bottom: 6px; }
+.entry-group { display: flex; align-items: center; gap: 10px; margin: 36px 0 14px; font-size: 24px; font-weight: 700; }
+.entry-group .count { display: inline-flex; align-items: center; justify-content: center; min-width: 30px; height: 30px; padding: 0 8px; background: var(--charcoal); color: var(--white); font-size: 15px; border-radius: 99px; }
+.all-done { padding: 14px 18px; border-radius: var(--radius); background: var(--good-bg); color: var(--good); }
+.entry-card.waiting { background: #fbfbfb; }
+.entry-card.waiting h3 { color: var(--muted); }
+
+/* Admin: judging progress */
+.progress-table td { vertical-align: middle; }
+.progress-table td:first-child, .progress-table td:last-child { white-space: nowrap; }
+.progress-bar { width: 120px; height: 8px; background: var(--light); border-radius: 99px; overflow: hidden; display: inline-block; vertical-align: middle; margin-right: 8px; }
+.progress-bar > span { display: block; height: 100%; background: var(--red); }
+.progress-bar.full > span { background: var(--good); }
+.results-table th.group { text-align: center; border-bottom: 2px solid var(--red); }
+.results-table th.group.s1 { border-bottom-color: var(--charcoal); }
+.results-table .final { background: var(--light); }

@@ -30,7 +30,22 @@ export type Score = {
   judge: string;
   scores: Record<string, number>;
   total: number;
+  /** The judge's Stage 2 comment */
   comment: string;
+  /** The judge's Stage 3 comment */
+  stage3_comment: string;
+  updated_at: string;
+};
+
+/** Stage 1: the AI Architect team's decision on one entry (one row per entry, shared by the whole team). */
+export type Screening = {
+  submission_email: string;
+  status: "passed" | "filtered";
+  reasons: string[];
+  note: string;
+  completeness: number | null;
+  technical: number | null;
+  architect: string;
   updated_at: string;
 };
 
@@ -77,7 +92,8 @@ export function ensureSchema(): Promise<void> {
         pitch TEXT NOT NULL,
         created_at TIMESTAMPTZ NOT NULL DEFAULT now()
       )`;
-      // One row per judge per entry; saving again replaces that judge's earlier scores.
+      // One row per judge per entry, holding all their criteria (Stage 2 and Stage 3 saves are merged).
+      // `comment` is the judge's Stage 2 comment and `stage3_comment` their Stage 3 one.
       await q`CREATE TABLE IF NOT EXISTS scores (
         submission_email TEXT NOT NULL REFERENCES submissions(email),
         judge TEXT NOT NULL,
@@ -86,6 +102,19 @@ export function ensureSchema(): Promise<void> {
         comment TEXT NOT NULL DEFAULT '',
         updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
         PRIMARY KEY (submission_email, judge)
+      )`;
+      await q`ALTER TABLE scores ADD COLUMN IF NOT EXISTS stage3_comment TEXT NOT NULL DEFAULT ''`;
+      // Stage 1: passed (with the team's Completeness and Technical scores) or filtered out (with reasons).
+      // Only architects and admins see this; participants are never told.
+      await q`CREATE TABLE IF NOT EXISTS screenings (
+        submission_email TEXT PRIMARY KEY REFERENCES submissions(email),
+        status TEXT NOT NULL CHECK (status IN ('passed', 'filtered')),
+        reasons JSONB NOT NULL DEFAULT '[]'::jsonb,
+        note TEXT NOT NULL DEFAULT '',
+        completeness INTEGER,
+        technical INTEGER,
+        architect TEXT NOT NULL,
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
       )`;
       // New registrations wait here until the person enters the code we emailed them
       await q`CREATE TABLE IF NOT EXISTS pending_registrations (

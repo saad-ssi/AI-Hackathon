@@ -1,11 +1,12 @@
-import { ADMIN_COOKIE, JUDGE_COOKIE } from "@/lib/auth";
+import { roleCookie, type StaffRole } from "@/lib/auth";
 import { cookies } from "next/headers";
 
-// Signs out of one role ({ role: "admin" | "judge" }), or both if no role is given
+const ROLES: StaffRole[] = ["admin", "architect", "judge"];
+
+// Signs out of one role ({ role: "admin" | "architect" | "judge" }), or all of them if no role is given
 export async function POST(req: Request) {
   const body = await req.json().catch(() => ({}));
   const jar = await cookies();
-  if (body.role !== "judge") jar.delete(ADMIN_COOKIE);
-  if (body.role !== "admin") jar.delete(JUDGE_COOKIE);
+  for (const role of ROLES) if (!body.role || body.role === role) jar.delete(roleCookie(role));
   return Response.json({ ok: true });
 }

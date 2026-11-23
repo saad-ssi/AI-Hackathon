@@ -3,8 +3,11 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-// Admins (/admin) and judges (/judge) each sign in with their own email plus their role's password
-export default function AdminLogin({ role }: { role: "admin" | "judge" }) {
+const WHO = { admin: "an admin", architect: "an architect", judge: "a judge" };
+const PASSWORD = { admin: "The admin password.", architect: "The architect password the organizers shared with you.", judge: "The judge password the organizers shared with you." };
+
+// Admins (/admin), architects (/architect) and judges (/judge) each sign in with their own email plus their role's password
+export default function AdminLogin({ role }: { role: "admin" | "architect" | "judge" }) {
   const router = useRouter();
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -30,12 +33,12 @@ export default function AdminLogin({ role }: { role: "admin" | "judge" }) {
       <div className="field">
         <label htmlFor="email">Your email</label>
         <input id="email" name="email" type="email" required maxLength={200} autoComplete="email" placeholder="you@ssidecisions.com" />
-        <div className="hint">The email the organizers registered you with as {role === "admin" ? "an admin" : "a judge"}.</div>
+        <div className="hint">The email the organizers registered you with as {WHO[role]}.</div>
       </div>
       <div className="field">
         <label htmlFor="password">Password</label>
         <input id="password" name="password" type="password" required autoComplete="current-password" />
-        <div className="hint">{role === "admin" ? "The admin password." : "The judge password the organizers shared with you."}</div>
+        <div className="hint">{PASSWORD[role]}</div>
       </div>
       <button className="btn" type="submit" disabled={busy}>{busy ? "Checking..." : "Sign in"}</button>
     </form>

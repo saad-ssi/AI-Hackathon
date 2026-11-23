@@ -14,7 +14,9 @@ Registrations and submissions are stored in a Neon Postgres database, which live
 | `/register` | Public | Registration form (company emails only) |
 | `/submit` | Public | Submission form; resubmits allowed until the deadline, every version kept |
 | `/admin` | Admin email + password | Registrations, submissions, results and CSV downloads, with the scoring rubric |
-| `/judge` | Judge email + password | Judges score each entry, with the scoring rubric |
+| `/architect` | Architect email + password | Stage 1: the AI Architect team filters and scores each entry |
+| `/judge` | Judge email + password | Stage 2: judges score Creativity & uniqueness and Business value |
+| `/judge/stage-3` | Judge email + password | Stage 3: judges score Presentation & live product (may be at a live demo) |
 
 ## Set it up (about 20 minutes)
 
@@ -39,8 +41,13 @@ Vercel project → **Settings → Environment Variables** (see `.env.example`):
 | --- | --- |
 | `ADMIN_PASSWORD` | A long password for `/admin` |
 | `ADMINS` | Who may use the admin view, as `email=Name` entries separated by commas, e.g. `sjoiya@ssidecisions.com=Saad, gali@ssidecisions.com=Gali` |
-| `JUDGE_PASSWORD` | A different password you give the judges |
-| `JUDGES` | Who may judge, as `email=Name` entries separated by commas, e.g. `jane@ssidecisions.com=Jane Smith, gali@ssidecisions.com=Gali` |
+| `ARCHITECTS` | Stage 1, the AI Architect team on `/architect`, as `email=Name` entries separated by commas |
+| `ARCHITECT_PASSWORD` | Optional password for `/architect`. If it's empty, architects use `JUDGE_PASSWORD` |
+| `JUDGE_PASSWORD` | A different password you give the Stage 2 and Stage 3 judges |
+| `CREATIVITY_JUDGES` | Stage 2 judges for Creativity & uniqueness, as `email=Name` entries separated by commas. The name is what the portal shows |
+| `BUSINESS_JUDGES` | Stage 2 judges for Business value, same format |
+| `PRESENTATION_JUDGES` | Stage 3 judges for Presentation & live product, same format |
+| `JUDGES` | Only used if the three lists above are all empty: everyone listed then scores all three judged criteria |
 | `ALLOWED_EMAIL_DOMAINS` | `ssidecisions.com` (comma-separate to allow more) |
 | `REGISTRATION_OPENS` | Optional override, e.g. `2026-11-02T00:00:00+05:00` |
 | `REGISTRATION_CLOSES` | Optional override, same format |
@@ -73,11 +80,34 @@ Registration is confirmed by email: the portal sends a 6-digit code (valid 15 mi
 ### 6. Test before announcing
 1. Register with your own `@ssidecisions.com` email, then submit a test entry.
 2. Check both appear in `/admin`, that the CSV downloads open in Excel, and (if emails are set up) that both confirmation emails arrive.
-3. Delete the test rows afterwards (Neon console → **SQL Editor**): `TRUNCATE scores, submission_versions, submissions, registrations, pending_registrations RESTART IDENTITY;`
+3. Delete the test rows afterwards (Neon console → **SQL Editor**): `TRUNCATE screenings, scores, submission_versions, submissions, registrations, pending_registrations RESTART IDENTITY;`
 
 ## Judging
-Judges open `/judge` (not `/admin`) and sign in with **their email** (it must be listed in `JUDGES`) and the **judge password**. They see every submission with links to the live app and repo. They score each of the five criteria from 1 to 10 (all equal) with an optional comment, and can update their scores any time. Judges see only their own scores. Scores are stored by judge email; the names shown come from `JUDGES`, and removing an email from `JUDGES` locks that judge out.
-Admins sign in with **their email** (it must be listed in `ADMINS`) and the **admin password**; removing an email from `ADMINS` locks that admin out. They see a **Results** table: each entry's average total across judges (out of 50), the number of judges who scored it, per-criterion averages and a ranking, plus a scores CSV.
+Judging has three stages. The criteria are defined in `lib/judging.ts`; the participant pages still show `CRITERIA` from `lib/config.ts`.
+
+**Stage 1, the AI Architect team (`/architect`).** Architects sign in with **their email** (listed in `ARCHITECTS`) and the architect password (`ARCHITECT_PASSWORD`, or `JUDGE_PASSWORD` if that's empty). For each entry they either:
+- **filter it out**, ticking the reasons from the checklist and adding a short description of why, or
+- **pass it**, with one team score from 1 to 10 for **Completeness** and one for **Technical execution**.
+
+There is one decision per entry for the whole team. Any architect can change it, the last save wins, and the page shows who saved it. Decisions are stored in the `screenings` table. Only architects and admins see filter reasons, and participants are never told.
+
+**Stages 2 and 3, upper management.** Judges sign in with **their email** and the **judge password**, and score only the criteria whose list they're on:
+- **Stage 2 (`/judge`):** Creativity & uniqueness (`CREATIVITY_JUDGES`) and Business value (`BUSINESS_JUDGES`).
+- **Stage 3 (`/judge/stage-3`):** Presentation & live product (`PRESENTATION_JUDGES`), which may be judged at a live demo.
+
+Each page shows the judge their own progress in tiles at the top. A judge on both stages gets tabs to switch between them; a judge on only one stage is sent straight to it, so `/judge` is the one link to share. On both pages:
+- Judges see every entry except those filtered out.
+- An entry still waiting for Stage 1 shows its scoring greyed out, with the note "Stage 1 filtering and scoring pending from the AI Architect team".
+- Judges never see Stage 1 scores, filter reasons or other judges' scores.
+- They can update their own scores any time.
+
+Each judge has one row per entry in the `scores` table. Saving one stage keeps their scores from the other; the Stage 3 comment is kept in `stage3_comment`. Removing someone from a list locks them out, and their scores for that criterion stop counting.
+
+**Results (`/admin`).** Admins sign in with **their email** (listed in `ADMINS`) and the **admin password**. The final score, out of 50, is:
+- Stage 1 Completeness + Technical execution, plus
+- the average of each criterion judged in Stages 2 and 3, over the judges on its list who have scored it.
+
+Only entries with every score in are ranked, and ties are flagged. Admins also see each judge's progress, entries waiting for Stage 1, the filtered-out list with reasons, and a breakdown for each project. There are CSV downloads for results, Stage 1 and the judges' Stage 2 and 3 scores.
 
 ## Where the data lives, and keeping copies
 - **Neon is separate from the website.** If the site breaks, the data is untouched. Open it from Vercel → **Storage** → your database → **Open in Neon**, then **Tables** to browse or **SQL Editor** to query.
