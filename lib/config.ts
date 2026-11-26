@@ -132,14 +132,14 @@ export const AT_A_GLANCE = [
   { big: "1 weekend", small: "Fri 27 Nov to Mon 30 Nov, 2 PM" },
   { big: "Claude + Cursor", small: "Build tools, already licensed org-wide" },
   { big: "LiteLLM", small: "Personal API key for model access, provided by the organizers" },
-  { big: "Vercel", small: "Free deployment with a live public URL" },
+  { big: "Live URL", small: "Any public host; Vercel recommended (free)" },
 ];
 
 export const STEPS = [
   { title: "Register", text: "Sign up on this portal with your SSI email." },
   { title: "Kickoff", text: "Rules, rubric and use cases walked through." },
   { title: "Build", text: "Locally, with Cursor or Claude Code." },
-  { title: "Deploy", text: "Push to GitHub, deploy on Vercel." },
+  { title: "Deploy", text: "Push to GitHub, deploy on Vercel (recommended) or any public host." },
   { title: "Submit", text: "Repo URL, live URL and a short project summary, here." },
   { title: "Evaluation", text: "Upper management scores each entry." },
   { title: "Winners", text: "Top submissions receive an Apple iPad." },
@@ -155,8 +155,8 @@ export const MUST_HAVES = [
     text: "Entries sit on public URLs, so no client or internal company data.",
   },
   {
-    title: "Be live on Vercel",
-    text: "A working public URL that evaluators can open and use. Build in JavaScript or Python (FastAPI/Flask); Streamlit and Gradio can't run on Vercel.",
+    title: "Be live on a public URL",
+    text: "A working app that evaluators can open and use, with no login. We recommend Vercel (free, with a step-by-step guide), but any host with a public URL works, so frameworks like Streamlit or Gradio are fine too.",
   },
   {
     title: "Working core first, then stretch",
@@ -226,7 +226,7 @@ export const CRITERIA = [
   { key: "completeness", label: "Completeness (including multi-agent orchestration)", hint: "Does it work end to end? Multi-agent orchestration counts here." },
   { key: "creativity", label: "Creativity & uniqueness", hint: "Is the idea fresh and specific?" },
   { key: "technical", label: "Technical execution", hint: "Clean build, sensible agents, API key kept out of the code." },
-  { key: "presentation", label: "Presentation & live product", hint: "Live on Vercel and easy to demo." },
+  { key: "presentation", label: "Presentation & live product", hint: "Live, public and easy to demo." },
   { key: "business", label: "Business value of the proposed solution", hint: "Would someone at SSI or a client actually use it?" },
 ] as const;
 
@@ -236,7 +236,7 @@ export const SCORE_MAX = 10;
 export const RULES = [
   {
     title: "Individual work",
-    text: "One entry per person, built in your own repo and deployed from your own Vercel account.",
+    text: "One entry per person, built in your own repo and deployed from your own account.",
   },
   {
     title: "Public or made-up data only",
@@ -244,7 +244,7 @@ export const RULES = [
   },
   {
     title: "Protect your API key",
-    text: "Store the LiteLLM key the organizers give you as a Vercel environment variable. Never commit it to the repo.",
+    text: "Store the LiteLLM key the organizers give you as an environment variable or secret on your host (e.g. Vercel). Never commit it to the repo.",
   },
   {
     title: "Safe AI-agent settings",
@@ -273,12 +273,12 @@ export const TOOLS = [
   },
   {
     title: "Deploy",
-    sub: "Vercel (Hobby, free)",
+    sub: "Vercel (recommended, free)",
     items: [
       "Sign in with GitHub, import the repo, deploy",
       "Every push redeploys automatically",
-      "Free Hobby plan with a live public URL",
       "Follow the Guide page step by step",
+      "Prefer another host? Any public URL works",
     ],
   },
 ];

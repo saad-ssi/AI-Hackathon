@@ -18,29 +18,58 @@ export function emailError(email: string): string | null {
   return null;
 }
 
-function parseUrl(v: string): URL | null {
+/**
+ * Accepts any link into a GitHub repo, as people tend to paste it (http, www., .git, /tree/main, ?tab=...),
+ * and returns the clean https://github.com/<owner>/<repo> address to store. Each rejection says what's wrong.
+ */
+export function checkRepoUrl(v: string): { url: string; error?: undefined } | { url?: undefined; error: string } {
+  let u: URL;
   try {
-    const u = new URL(v);
-    return u.protocol === "https:" ? u : null;
+    u = new URL(/^[a-z]+:\/\//i.test(v) ? v : `https://${v}`);
   } catch {
-    return null;
+    return { error: "Your GitHub repo URL isn't a complete web address. Copy the link from your repo's page, like https://github.com/your-username/my-hack" };
   }
+  const host = u.hostname.toLowerCase();
+  if (host !== "github.com" && host !== "www.github.com") {
+    return { error: "Your repo URL must be a GitHub link, like https://github.com/your-username/my-hack" };
+  }
+  const [owner, repo] = u.pathname.split("/").filter(Boolean);
+  if (!owner || !repo) {
+    return { error: "That GitHub link is missing the repo name. Link to the repository itself, like https://github.com/your-username/my-hack, not your profile." };
+  }
+  return { url: `https://github.com/${owner}/${repo.replace(/\.git$/i, "")}` };
 }
 
-export function repoUrlError(v: string): string | null {
-  const u = parseUrl(v);
-  // Exactly https://github.com/<owner>/<repo>, same rule as the form's pattern
-  if (!u || u.hostname !== "github.com" || u.search || u.hash || !/^\/[\w.-]+\/[\w.-]+\/?$/.test(u.pathname)) {
-    return "GitHub repo URL should look like https://github.com/your-username/your-repo";
-  }
-  return null;
-}
+// Hosts that only work on the participant's own machine or network, never for evaluators
+const PRIVATE_HOST = /(^|\.)(localhost|local|internal|lan|home|test|example|invalid)$/;
 
+/**
+ * Any public https address on any host, e.g. https://my-hack.vercel.app or https://huggingface.co/spaces/me/my-hack.
+ * Each rejection says what's wrong, since the form shows this message as is.
+ */
 export function liveUrlError(v: string): string | null {
-  const u = parseUrl(v);
-  // Just the address, e.g. https://my-hack.vercel.app, same rule as the form's pattern
-  if (!u || !/^[\w-]+(\.[\w-]+)*\.vercel\.app$/.test(u.hostname) || (u.pathname !== "/" && u.pathname !== "") || u.search || u.hash) {
-    return "Live URL should be your Vercel address, like https://my-hack.vercel.app";
+  let u: URL;
+  try {
+    u = new URL(v);
+  } catch {
+    return "Your live URL isn't a complete web address. Copy the full link from your browser's address bar, starting with https://";
+  }
+  if (u.protocol === "http:") {
+    return "Your live URL starts with http://. Use the secure https:// version of the address (most hosts, including Vercel, provide it automatically).";
+  }
+  if (u.protocol !== "https:") return "Your live URL must be a web address starting with https://";
+  if (u.username || u.password) {
+    return "Remove the username and password from your live URL. Evaluators must be able to open your app without logging in.";
+  }
+  const host = u.hostname.toLowerCase();
+  if (/^\d+(\.\d+){3}$/.test(host) || host.startsWith("[")) {
+    return "Your live URL uses an IP address. Use your app's public web address instead, with a domain name like my-hack.vercel.app.";
+  }
+  if (!host.includes(".") || PRIVATE_HOST.test(host)) {
+    return `"${host}" only works on your own computer or network, so evaluators can't open it. Deploy your app and use its public address, like https://my-hack.vercel.app.`;
+  }
+  if (!/^([a-z0-9-]+\.)+([a-z]{2,}|xn--[a-z0-9-]+)$/.test(host)) {
+    return "Your live URL's domain doesn't look right. Copy the full link from your browser's address bar, like https://my-hack.vercel.app.";
   }
   return null;
 }

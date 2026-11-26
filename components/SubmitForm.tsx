@@ -62,12 +62,12 @@ export default function SubmitForm({ useCases }: { useCases: Option[] }) {
       {error && <div className="alert err" role="alert">{error}</div>}
       <div className="field">
         <label htmlFor="email">Registered email</label>
-        <input id="email" name="email" type="email" required maxLength={200} autoComplete="email" />
+        <input id="email" name="email" type="email" required autoComplete="email" />
         <div className="hint">The same company email you registered with.</div>
       </div>
       <div className="field">
         <label htmlFor="projectName">Project name</label>
-        <input id="projectName" name="projectName" type="text" required minLength={2} maxLength={100} />
+        <input id="projectName" name="projectName" type="text" required />
       </div>
       <div className="field">
         <label htmlFor="useCase">Use case</label>
@@ -78,23 +78,22 @@ export default function SubmitForm({ useCases }: { useCases: Option[] }) {
       </div>
       <div className="field">
         <label htmlFor="repoUrl">GitHub repo URL</label>
-        <input id="repoUrl" name="repoUrl" type="url" required placeholder="https://github.com/your-username/my-hack"
-          pattern="https://github\.com/(\w|\.|-)+/(\w|\.|-)+/?"
-          title="Your GitHub repository, like https://github.com/your-username/my-hack" />
+        <input id="repoUrl" name="repoUrl" type="text" inputMode="url" spellCheck={false} required placeholder="https://github.com/your-username/my-hack" />
       </div>
       <div className="field">
-        <label htmlFor="liveUrl">Live Vercel URL</label>
-        <input id="liveUrl" name="liveUrl" type="url" required placeholder="https://my-hack.vercel.app"
-          pattern="https://(\w|-)+(\.(\w|-)+)*\.vercel\.app/?"
-          title="Your Vercel address, like https://my-hack.vercel.app" />
-        <div className="hint">The short address under Domains in your Vercel project.</div>
+        <label htmlFor="liveUrl">Live URL</label>
+        <input id="liveUrl" name="liveUrl" type="text" inputMode="url" spellCheck={false} required placeholder="https://my-hack.vercel.app" />
+        <div className="hint">Your app&apos;s public address, on Vercel or any other host. Evaluators must be able to open it without logging in. On Vercel, use the short address under Domains.</div>
       </div>
       <div className="field">
         <label htmlFor="pitch">Project summary</label>
         <textarea id="pitch" name="pitch" required minLength={30} maxLength={600} rows={5}
           placeholder="What it does and who it's for, then what stands out, e.g. agentic features, business value or a clever technique."
           onChange={(e) => setPitchLen(e.target.value.length)} />
-        <div className="hint">Briefly: what you built, and the 1–3 things that make it stand out in your opinion. {pitchLen}/600 characters</div>
+        <div className="hint">
+          <strong>Please write a proper summary that highlights your work.</strong> It&apos;s the first thing judges read to understand your entry.
+          Briefly: what you built, and the 1–3 things that make it stand out in your opinion. {pitchLen}/600 characters (at least 30)
+        </div>
       </div>
       <div className="hp" aria-hidden="true">
         <label htmlFor="website">Website</label>

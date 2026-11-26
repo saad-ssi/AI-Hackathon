@@ -1,7 +1,7 @@
 import { submissionsNotYetOpen, submissionsOpen } from "@/lib/config";
 import { ensureSchema, sql, type SubmissionVersion } from "@/lib/db";
 import { sendSubmissionEmail } from "@/lib/email";
-import { clean, liveUrlError, normalizeEmail, repoUrlError, USE_CASE_OPTIONS } from "@/lib/validate";
+import { checkRepoUrl, clean, liveUrlError, normalizeEmail, USE_CASE_OPTIONS } from "@/lib/validate";
 
 export async function POST(req: Request) {
   try {
@@ -14,22 +14,29 @@ export async function POST(req: Request) {
     }
 
     const email = normalizeEmail(body.email);
-    const projectName = clean(body.projectName, 100);
+    // The caps on name and links only guard the database against junk; they're far above anything a real entry needs.
+    // The summary keeps its 30-600 character rule, so judges get a proper summary of every entry.
+    const projectName = clean(body.projectName, 300);
     const useCase = clean(body.useCase, 50);
-    const repoUrl = clean(body.repoUrl, 300).replace(/\/+$/, "");
-    const liveUrl = clean(body.liveUrl, 300).replace(/\/+$/, "");
+    const repo = checkRepoUrl(clean(body.repoUrl, 2000));
+    const liveUrl = clean(body.liveUrl, 2000).replace(/\/+$/, "");
     const pitch = clean(body.pitch, 600);
 
     if (!email) return Response.json({ error: "Please enter the email you registered with." }, { status: 400 });
-    if (projectName.length < 2) return Response.json({ error: "Please give your project a name." }, { status: 400 });
+    if (!projectName) return Response.json({ error: "Please give your project a name." }, { status: 400 });
     if (!USE_CASE_OPTIONS.some((o) => o.id === useCase)) {
       return Response.json({ error: "Please choose a use case." }, { status: 400 });
     }
-    const rErr = repoUrlError(repoUrl);
-    if (rErr) return Response.json({ error: rErr }, { status: 400 });
+    if (repo.error !== undefined) return Response.json({ error: repo.error }, { status: 400 });
+    const repoUrl = repo.url;
     const lErr = liveUrlError(liveUrl);
     if (lErr) return Response.json({ error: lErr }, { status: 400 });
-    if (pitch.length < 30) return Response.json({ error: "Please write a short project summary (at least 30 characters)." }, { status: 400 });
+    if (pitch.length < 30) {
+      return Response.json(
+        { error: "Please write a proper project summary (at least 30 characters) that highlights your work. It's what judges read first." },
+        { status: 400 },
+      );
+    }
     if (body.checklist !== true) {
       return Response.json({ error: "Please confirm the final checks before submitting." }, { status: 400 });
     }

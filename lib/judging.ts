@@ -18,7 +18,7 @@ export const STAGE1 = [
       { key: "not-individual", label: "Not individual work" },
       { key: "real-data", label: "Uses client or internal data" },
       { key: "key-in-code", label: "API key in the code" },
-      { key: "not-vercel", label: "Not live on Vercel in JavaScript or Python" },
+      { key: "not-vercel", label: "Not live on a public URL (or it asks visitors to log in)" },
       { key: "outside-dates", label: "Submitted outside 27 Nov to 30 Nov, 2 PM" },
     ],
     scoredOn: [],

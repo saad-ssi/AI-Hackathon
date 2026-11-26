@@ -115,7 +115,7 @@ export default function Home() {
         <div className="wrap">
           <p className="eyebrow">CHARACTER SELECT</p>
           <h2>PICK YOUR QUEST</h2>
-          <p className="lede">Every entry is an agentic AI solution, ideally multi-agent, running live on Vercel. Bring your own idea or start from a sample.</p>
+          <p className="lede">Every entry is an agentic AI solution, ideally multi-agent, running live on a public URL. Bring your own idea or start from a sample.</p>
           <div className="quests">
             {quests.map((q, i) => (
               <Link key={q.id} href={`/use-cases#${q.id}`} className={`quest${i === 0 ? " featured" : ""}`}>
@@ -153,7 +153,7 @@ export default function Home() {
               <h3>HOUSE RULES</h3>
               <p>
                 Build on your own, with public or made-up data only. Keep your API key out of the code, use safe agent settings,
-                and ship a working app live on Vercel before adding polish.
+                and ship a working app live on a public URL before adding polish.
               </p>
               <Link className="btn sm" href="/rules">READ THE RULES ▶</Link>
             </div>

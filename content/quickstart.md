@@ -220,7 +220,7 @@ From here, build your real product on this foundation. Keep every AI call inside
 
 Prefer Python, for example to use LangGraph or LangChain? Vercel runs Python apps built with **FastAPI** or **Flask** with no extra configuration. Do the steps in this section **instead of Steps 3 to 5**; everything from Step 6 onward (GitHub, Vercel, submitting) is the same.
 
-> [!WARNING] **What doesn't work on Vercel:** Streamlit and Gradio apps need an always-on server, which Vercel doesn't provide, so they can't be used for this hackathon. Build your page with plain HTML (as below) or a JavaScript front end, and keep Python for the server side.
+> [!WARNING] **What doesn't work on Vercel:** Streamlit and Gradio apps need an always-on server, which Vercel doesn't provide. To follow this guide, build your page with plain HTML (as below) or a JavaScript front end, and keep Python for the server side. If you'd rather use Streamlit or Gradio, that's allowed: host it somewhere that supports them (such as Streamlit Community Cloud or Hugging Face Spaces) and submit that public URL.
 
 **P1. Install Python.** Go to [python.org/downloads](https://www.python.org/downloads/) and install Python 3.12 or newer. On Windows, **tick "Add python.exe to PATH"** on the first installer screen. Check it worked:
 
@@ -491,7 +491,7 @@ On this portal's [Submit page](/submit), enter two links and a short project sum
 | Field | What to paste | Example |
 | --- | --- | --- |
 | GitHub repo URL | Your repository's page | `https://github.com/<your-username>/my-hack` |
-| Live Vercel URL | Your **production domain**: the short address under **Domains** | `https://my-hack.vercel.app` |
+| Live URL | Your **production domain**: the short address under **Domains** (or your app's public address if you host elsewhere) | `https://my-hack.vercel.app` |
 | Project summary | A few sentences (up to 600 characters): what you built and who it's for, then the 1–3 things that make it stand out | "An agent that fact-checks any article against public sources. It splits claims, cross-checks several APIs and re-searches when sources disagree." |
 
 > [!WARNING] **Use the short `.vercel.app` address, not a deployment link.** Vercel also shows long addresses such as `my-hack-a1b2c3-yourname.vercel.app`. Those point to one specific build and may ask visitors to log in to Vercel. Evaluators would hit a login wall.
